@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shift;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Seance\SeanceProgramStoreRequest;
+use App\Http\Requests\Seance\SeanceProgramUpdateRequest;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
 use App\Models\SeanceBar;
@@ -136,25 +137,21 @@ class ProgramController extends Controller {
             'masters'  => $this->masters(),
             'programs' => $this->programs(),
             'services' => $this->services(),
-            'items'    => $this->bar(),
+            'bar' => $this->bar(),
         ]);
     }
 
     /**
-     * @param SeanceUpdateRequest $request
+     * @param SeanceProgramUpdateRequest $request
      * @param int $id
      * @return RedirectResponse
      */
-    public function update(SeanceUpdateRequest $request, int $id): RedirectResponse
+    public function update(SeanceProgramUpdateRequest $request, int $id): RedirectResponse
     {
         $data = $request->validated();
         $data['admin_id'] = Auth::id();
 
-        $seance = Seance::find($id);
-
-        if (is_null($seance)) {
-            return back()->withErrors(['action' => 'Обновляемый сеанс не найден']);
-        }
+        $seance = SeanceProgram::query()->findOrFail($id);
 
         try {
             DB::beginTransaction();
@@ -206,30 +203,8 @@ class ProgramController extends Controller {
     {
         $seance = SeanceProgram::query()->findOrFail($id);
 
-        try {
-            DB::beginTransaction();
-            if (!is_null($seance->services())) {
-                foreach ($seance->services() as $service) {
-                    $service->delete();
-                }
-            }
+        $seance->delete();
 
-            if (!is_null($seance->bar())) {
-                foreach ($seance->bar() as $item) {
-                    $item->delete();
-                }
-            }
-
-            $seance->delete();
-            DB::commit();
-
-            return redirect()->route('shift.index');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('SeanceController:update', ['message' => $e->getMessage()]);
-
-            return redirect()->back();
-        }
+        return redirect()->route('shift.index');
     }
 }
