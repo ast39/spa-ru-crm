@@ -1,6 +1,5 @@
 @php
     use App\Http\Services\Helper;
-    use Illuminate\Support\Facades\Gate;
 @endphp
 
 @extends('layouts.app')
@@ -82,16 +81,14 @@
                 </tbody>
             </table>
 
-            <form method="post" action="{{ route('seance.bar.destroy', $seance->record_id) }}">
+            <form method="post" action="{{ route('shift.bar.destroy', $seance->record_id) }}">
                 @csrf
                 @method('DELETE')
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                     <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">К смене</a>
-                    <a href="{{ route('seance.bar.edit', $seance->record_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
-                    @if(Gate::allows('owner'))
-                        <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить продажу напитка?')" class="btn btn-danger me-1 rounded">Удалить</button>
-                    @endif
+                    <a href="{{ route('shift.bar.edit', $seance->record_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
+                    <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить продажу напитка?')" class="btn btn-danger me-1 rounded">Удалить</button>
                 </div>
             </form>
         </div>

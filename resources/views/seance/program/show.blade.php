@@ -32,7 +32,7 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Корректировка стоимости') }}</th>
-                        <td class="text-end">{{ is_null($seance->extra_price) ? ' - ' : number_format($seance->extra_price, 2, '.', ' ') . ' р.' }}</td>
+                        <td class="text-end">{{ is_null($seance->handle_price) ? ' - ' : number_format($seance->handle_price, 2, '.', ' ') . ' р.' }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Статус') }}</th>
@@ -108,7 +108,7 @@
                                 @forelse($seance->services as $service)
                                     <tr>
                                         <td class="text-end" style="width: 60px">{{ $loop->iteration }}</td>
-                                        <td class="text-start"><a href="{{ route('seance.service.show', $service->record_id) }}" target="_blank">{{ $service->service->title }}</a></td>
+                                        <td class="text-start"><a href="{{ route('shift.service.show', $service->record_id) }}" target="_blank">{{ $service->service->title }}</a></td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="2" class="text-start">{{ __('Дополнительно ничего не приобреталось') }}</td></tr>
@@ -134,7 +134,7 @@
                                 @forelse($seance->bar as $item)
                                     <tr>
                                         <td class="text-end" style="width: 60px">{{ $loop->iteration }}</td>
-                                        <td class="text-start"><a href="{{ route('seance.bar.show', $item->record_id) }}" target="_blank">{{ $item->bar->title }} ({{ $item->bar->portion }})</a></td>
+                                        <td class="text-start"><a href="{{ route('shift.bar.show', $item->record_id) }}" target="_blank">{{ $item->bar->title }} ({{ $item->bar->portion }})</a></td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="2" class="text-start">{{ __('Дополнительно ничего не приобреталось') }}</td></tr>
@@ -146,13 +146,13 @@
                 </div>>
             </div>
 
-            <form method="post" action="{{ route('seance.program.destroy', $seance->seance_id) }}">
+            <form method="post" action="{{ route('shift.program.destroy', $seance->seance_id) }}">
                 @csrf
                 @method('DELETE')
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                     <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">К смене</a>
-                    <a href="{{ route('seance.program.edit', $seance->record_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
+                    <a href="{{ route('shift.program.edit', $seance->seance_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
                     @if(Gate::allows('owner'))
                         <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить продажу программы?')" class="btn btn-danger me-1 rounded">Удалить</button>
                     @endif

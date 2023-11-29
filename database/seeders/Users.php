@@ -20,48 +20,35 @@ class Users extends Seeder
             'password' => Hash::make('root'),
             'note' => 'Владелец',
         ]);
-
         $user->roles()->attach([
             RoleType::Owner->value
         ]);
 
 
         $user = User::create([
-            'name' => 'Администратор',
-            'login' => 'admin',
-            'password' => Hash::make('admin'),
-            'note' => 'Администратор',
+            'name' => 'Луиза',
+            'login' => 'admin1',
+            'password' => Hash::make('admin1'),
+            'note' => 'Старший администратор',
         ]);
-
         $user->roles()->attach(RoleType::Administrator->value, [
-            'percent_program' => 10,
-            'percent_service' => 10,
-            'percent_bar' => 10,
+            'percent_program' => 15,
+            'percent_service' => 15,
+            'percent_bar' => 15,
         ]);
-
-
-        $user = User::create([
-
-            'name' => 'Мастер',
-            'login' => 'master',
-            'password' => Hash::make('master'),
-            'note' => 'Мастер',
-        ]);
-
         $user->roles()->attach(RoleType::Master->value, [
-            'percent_program' => 25,
-            'percent_service' => 25,
+            'percent_program' => 40,
+            'percent_service' => 40,
             'percent_bar' => 0,
         ]);
 
 
         $user = User::create([
-            'name' => 'Мастер Админимтратор',
-            'login' => 'master_admin',
-            'password' => Hash::make('master_admin'),
-            'note' => 'Мастер-администратор',
+            'name' => 'Снежана',
+            'login' => 'admin2',
+            'password' => Hash::make('admin2'),
+            'note' => 'Администратор 2',
         ]);
-
         $user->roles()->attach(RoleType::Administrator->value, [
             'percent_program' => 10,
             'percent_service' => 10,
@@ -70,6 +57,45 @@ class Users extends Seeder
         $user->roles()->attach(RoleType::Master->value, [
             'percent_program' => 30,
             'percent_service' => 30,
+            'percent_bar' => 0,
+        ]);
+
+
+        $user = User::create([
+            'name' => 'Юля',
+            'login' => 'master1',
+            'password' => Hash::make('master1'),
+            'note' => 'Старший мастер',
+        ]);
+        $user->roles()->attach(RoleType::Master->value, [
+            'percent_program' => 40,
+            'percent_service' => 40,
+            'percent_bar' => 0,
+        ]);
+
+
+        $user = User::create([
+            'name' => 'Мария',
+            'login' => 'master2',
+            'password' => Hash::make('master2'),
+            'note' => 'Мастер 2',
+        ]);
+        $user->roles()->attach(RoleType::Master->value, [
+            'percent_program' => 30,
+            'percent_service' => 30,
+            'percent_bar' => 0,
+        ]);
+
+
+        $user = User::create([
+            'name' => 'Анна',
+            'login' => 'master3',
+            'password' => Hash::make('master3'),
+            'note' => 'Мастер 3',
+        ]);
+        $user->roles()->attach(RoleType::Master->value, [
+            'percent_program' => 25,
+            'percent_service' => 25,
             'percent_bar' => 0,
         ]);
     }

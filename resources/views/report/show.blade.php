@@ -126,7 +126,7 @@
                                 <tbody>
                                 @forelse($report->shift->programs as $program)
                                     <tr>
-                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('seance.program.show', $program->seance_id) }}">{{ date('H:i', $program->open_time) }}</a></td>
+                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('shift.program.show', $program->seance_id) }}">{{ date('H:i', $program->open_time) }}</a></td>
                                         <td>Программа "<a href="{{ route('dict.program.show', $program->program->program_id) }}">{{ $program->program->title }}</a>", мастер <a href="{{ route('dict.master.show', $program->master->id) }}">{{ $program->master->name }}</a></td>
                                     </tr>
                                     <tr>
@@ -156,7 +156,7 @@
                                 <tbody>
                                 @forelse($report->shift->services as $service)
                                     <tr>
-                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('seance.service.show', $service->record_id) }}">{{ date('H:i', $service->service->created_at) }}</a></td>
+                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('shift.service.show', $service->record_id) }}">{{ date('H:i', $service->service->created_at) }}</a></td>
                                         <td>Услуга "<a href="{{ route('dict.service.show', $service->service->service_id) }}">{{ $service->service->title }}</a>", мастер <a href="{{ route('dict.master.show', $service->master->id) }}">{{ $service->master->name }}</a>, в кол-ве: {{ $service->amount }}</td>
                                     </tr>
                                     <tr>
@@ -190,7 +190,7 @@
                                 <tbody>
                                 @forelse($report->shift->bar as $item)
                                     <tr>
-                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('seance.bar.show', $item->record_id) }}">{{ date('H:i', $item->bar->created_at) }}</a></td>
+                                        <td rowspan="2" style="width: 100px"><a class="text-primary" href="{{ route('shift.bar.show', $item->record_id) }}">{{ date('H:i', $item->bar->created_at) }}</a></td>
                                         <td>Напиток "<a href="{{ route('dict.bar.show', $item->bar->item_id) }}">{{ $item->bar->title }}</a>, в кол-ве: {{ $item->bar->portion }} x {{ $item->amount }}</td>
                                     </tr>
                                     <tr>

@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shift;
 
-use App\Http\Requests\Seance\SeanceBarStoreRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Seance\SeanceProgramStoreRequest;
-use App\Http\Requests\Seance\SeanceServiceStoreRequest;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
 use App\Models\SeanceBar;
@@ -16,19 +15,32 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
-class SeanceController extends Controller {
+class ProgramController extends Controller {
 
     use Dictionarable;
 
+
+    /**
+     * @param $id
+     * @return View
+     */
+    public function show($id): View
+    {
+        $seance = SeanceProgram::findOrFail($id);
+
+        return view('seance.program.show', [
+            'seance' => $seance,
+        ]);
+    }
 
     /**
      * Форма продажи программ
      *
      * @return View
      */
-    public function createProgram(): View
+    public function create(): View
     {
-        return view('seance.create_program', [
+        return view('seance.program.create', [
             'admins'   => $this->admins(),
             'masters'  => $this->masters(),
             'programs' => $this->programs(),
@@ -38,40 +50,12 @@ class SeanceController extends Controller {
     }
 
     /**
-     * Форма продажи услуг
-     *
-     * @return View
-     */
-    public function createService(): View
-    {
-        return view('seance.create_service', [
-            'admins'   => $this->admins(),
-            'masters'  => $this->masters(),
-            'services' => $this->services(),
-        ]);
-    }
-
-    /**
-     * Форма породажи бара
-     *
-     * @return View
-     */
-    public function createBar(): View
-    {
-        return view('seance.create_bar', [
-            'admins'   => $this->admins(),
-            'masters'  => $this->masters(),
-            'bar' => $this->bar(),
-        ]);
-    }
-
-    /**
      * Продажа сеанса (программы)
      *
      * @param SeanceProgramStoreRequest $request
      * @return RedirectResponse
      */
-    public function programStore(SeanceProgramStoreRequest $request): RedirectResponse
+    public function store(SeanceProgramStoreRequest $request): RedirectResponse
     {
         $data = $request->validated();
         $data['admin_id']  = Auth::id();
@@ -99,7 +83,7 @@ class SeanceController extends Controller {
                         'sale' => $data['sale'],
                         'gift' => (int) !is_null($service_order['gift'] ?? null),
                         'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
+                        'note' => '',
                     ]);
                 }
             }
@@ -120,14 +104,14 @@ class SeanceController extends Controller {
                         'sale' => $data['sale'],
                         'gift' => (int) !is_null($item_order['gift'] ?? null),
                         'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
+                        'note' => '',
                     ]);
                 }
             }
 
             DB::commit();
 
-            return redirect()->route('seance.show', $seance_id);
+            return redirect()->route('shift.program.show', $seance_id);
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -137,148 +121,6 @@ class SeanceController extends Controller {
         }
     }
 
-    /**
-     * Продажа доп. услуг
-     *
-     * @param SeanceServiceStoreRequest $request
-     * @return RedirectResponse
-     */
-    public function serviceStore(SeanceServiceStoreRequest $request): RedirectResponse
-    {
-        $data = $request->validated();
-        $data['admin_id'] = Auth::id();
-        $data['shift_id']  = ShiftHelper::currentShiftId();
-        $data['seance_id'] = null;
-
-        try {
-            DB::beginTransaction();
-
-            if (!is_null($data['services'] ?? null)) {
-                foreach ($data['services'] as $service_id => $service_order) {
-                    if ($service_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceService::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $data['seance_id'],
-                        'admin_id' => $data['admin_id'],
-                        'master_id' => $data['master_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'service_id' => $service_id,
-                        'amount' => $service_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($service_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return redirect()->route('shift.index');
-
-        } catch (\Exception $e) {
-
-            DB::rollback();
-            Log::error('SeanceController:store', ['message' => $e->getMessage()]);
-
-            return redirect()->back();
-        }
-    }
-
-    /**
-     * Продажа позиций бара
-     *
-     * @param SeanceBarStoreRequest $request
-     * @return RedirectResponse
-     */
-    public function barStore(SeanceBarStoreRequest $request): RedirectResponse
-    {
-        $data = $request->validated();
-        $data['admin_id']  = Auth::id();
-        $data['shift_id']  = ShiftHelper::currentShiftId();
-        $data['seance_id'] = null;
-
-        try {
-            DB::beginTransaction();
-
-            if (!is_null($data['bar'] ?? null)) {
-                foreach ($data['bar'] as $item_id => $item_order) {
-                    if ($item_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceBar::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $data['seance_id'],
-                        'admin_id' => $data['admin_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'item_id' => $item_id,
-                        'amount' => $item_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($item_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return redirect()->route('shift.index');
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-            Log::error(__CLASS__, ['message' => $e->getMessage()]);
-
-            return redirect()->back();
-        }
-    }
-
-
-
-
-    /**
-     * @param $id
-     * @return View
-     */
-    public function showProgram($id): View
-    {
-        $seance = SeanceProgram::findOrFail($id);
-
-        return view('seance.program.show', [
-            'seance' => $seance,
-        ]);
-    }
-
-    /**
-     * @param $id
-     * @return View
-     */
-    public function showService($id): View
-    {
-        $seance = SeanceService::findOrFail($id);
-
-        return view('seance.service.show', [
-            'seance' => $seance,
-        ]);
-    }
-
-    /**
-     * @param $id
-     * @return View
-     */
-    public function showBar($id): View
-    {
-        $seance = SeanceBar::findOrFail($id);
-
-        return view('seance.bar.show', [
-            'seance' => $seance,
-        ]);
-    }
 
     /**
      * @param int $id
@@ -286,15 +128,15 @@ class SeanceController extends Controller {
      */
     public function edit(int $id): View
     {
-        $seance = Seance::findOrFail($id);
+        $seance = SeanceProgram::findOrFail($id);
 
-        return view('seance.edit', [
+        return view('seance.program.edit', [
             'seance'   => $seance,
             'admins'   => $this->admins(),
             'masters'  => $this->masters(),
             'programs' => $this->programs(),
             'services' => $this->services(),
-            'items'    => $this->items(),
+            'items'    => $this->bar(),
         ]);
     }
 
@@ -381,7 +223,7 @@ class SeanceController extends Controller {
             $seance->delete();
             DB::commit();
 
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
 
         } catch (\Exception $e) {
             DB::rollback();

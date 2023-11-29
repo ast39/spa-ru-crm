@@ -35,7 +35,7 @@
                     @endif
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('cabinet.index') }}">{{ __('Последний отчет') }}</a>
+                        <a class="nav-link" href="{{ route('cabinet.owner') }}">{{ __('Последний отчет') }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('shift.index') }}">{{ __('Смена') }}</a>

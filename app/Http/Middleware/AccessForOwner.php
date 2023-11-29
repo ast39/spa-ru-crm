@@ -17,7 +17,7 @@ class AccessForOwner
     public function handle(Request $request, Closure $next): Response
     {
         if (!Gate::allows('owner')) {
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
         }
 
         return $next($request);

@@ -12,7 +12,7 @@
         <div class="card-header">{{ __('Продажа : Программа') }}</div>
 
         <div class="card-body bg-light">
-            <form method="post" action="{{ route('seance.program.store') }}">
+            <form method="post" action="{{ route('shift.program.store') }}">
                 @csrf
                 @method('POST')
 
@@ -162,9 +162,9 @@
                 <div class="mb-3">
                     <label for="handle_price" class="form-label">{{ __('Корректировка стоимости') }}</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="handle_price" name="handle_price" placeholder="{{ __('Если стоимость не по прайсу') }}" value="{{ old('extra_price') }}" />
+                        <input type="text" class="form-control" id="handle_price" name="handle_price" placeholder="{{ __('Если стоимость не по прайсу') }}" value="{{ old('handle_price') }}" />
                         <span class="input-group-text">{{ __('руб.') }}</span>
-                        @error('extra_price')
+                        @error('handle_price')
                             <p class="text-danger mt-2">{{ $message }}</p>
                         @enderror
                     </div>

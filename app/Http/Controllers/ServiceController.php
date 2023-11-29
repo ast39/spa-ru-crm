@@ -65,7 +65,7 @@ class ServiceController extends Controller {
     public function create(): View|RedirectResponse
     {
         if (!Gate::allows('owner')) {
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
         }
 
         return view('service.create');
@@ -80,7 +80,7 @@ class ServiceController extends Controller {
     public function store(ServiceStoreRequest $request): RedirectResponse
     {
         if (!Gate::allows('owner')) {
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
         }
 
         $data = $request->validated();
@@ -132,7 +132,7 @@ class ServiceController extends Controller {
     public function destroy(int $id): RedirectResponse
     {
         if (!Gate::allows('owner')) {
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
         }
 
         $service = Service::query()->findOrFail($id);

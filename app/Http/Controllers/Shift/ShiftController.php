@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shift;
 
+use App\Http\Controllers\Controller;
 use App\Http\Enums\SoftStatus;
 use App\Http\Requests\Seance\SeanceFilterRequest;
 use App\Http\Requests\Shift\ShiftCloseStoreRequest;
@@ -49,7 +50,7 @@ class ShiftController extends Controller {
             ->orderByDesc('created_at')
             ->get();
 
-        return view('seance.index', [
+        return view('shift.index', [
             'seances' => $seances,
             'services' => $services,
             'bar' => $bar,
@@ -109,6 +110,7 @@ class ShiftController extends Controller {
             DB::beginTransaction();
             $shift->update([
                 'closed_admin_id' => Auth::id(),
+                'closed_time' => Carbon::now(+2),
                 'status' => SoftStatus::On->value,
             ]);
             $report_id = Report::query()->create($data)->report_id;

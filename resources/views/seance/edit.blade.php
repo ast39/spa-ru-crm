@@ -146,9 +146,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="extra_price" class="form-label">{{ __('Корректировка стоимости') }}</label>
-                    <input type="text" class="form-control" id="extra_price" name="extra_price" value="{{ $program->extra_price }}" />
-                    @error('extra_price')
+                    <label for="handle_price" class="form-label">{{ __('Корректировка стоимости') }}</label>
+                    <input type="text" class="form-control" id="handle_price" name="handle_price" value="{{ $program->handle_price }}" />
+                    @error('handle_price')
                         <p class="text-danger mt-2">{{ $message }}</p>
                     @enderror
                 </div>

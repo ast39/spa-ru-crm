@@ -1,15 +1,17 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ShiftController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\BarController;
 use App\Http\Controllers\CabinetController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Shift\ProgramController as ShiftProgram;
+use App\Http\Controllers\Shift\ServiceController as ShiftService;
+use App\Http\Controllers\Shift\BarController as ShiftBar;
+use App\Http\Controllers\Shift\ShiftController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +22,10 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth']], function() {
 
     # Кабинет
-    Route::get('cabinet', CabinetController::class)->middleware('auth')->name('cabinet.index');
+    Route::get('cabinet', [CabinetController::class, 'index'])->middleware('auth')->name('cabinet.index');
+    Route::get('cabinet/owner', [CabinetController::class, 'owner'])->middleware('auth')->name('cabinet.owner');
+    Route::get('cabinet/admin/{id?}', [CabinetController::class, 'admin'])->middleware('auth')->name('cabinet.admin');
+    Route::get('cabinet/master/{id?}', [CabinetController::class, 'master'])->middleware('auth')->name('cabinet.master');
 
     # Справочники
     Route::group(['prefix' => 'dict'], function () {
@@ -103,28 +108,36 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('', [ShiftController::class, 'index'])->name('shift.index');
         Route::post('open', [ShiftController::class, 'open'])->name('shift.open');
         Route::post('close', [ShiftController::class, 'close'])->name('shift.close');
-    });
 
-    # Сеансы
-    Route::group(['prefix' => 'seance'], function () {
+        # Программы смены
+        Route::group(['prefix' => 'program'], function () {
+            Route::get('create', [ShiftProgram::class, 'create'])->name('shift.program.create');
+            Route::post('', [ShiftProgram::class, 'store'])->name('shift.program.store');
+            Route::get('{id}', [ShiftProgram::class, 'show'])->name('shift.program.show');
+            Route::get('edit/{id}', [ShiftProgram::class, 'edit'])->name('shift.program.edit');
+            Route::put('{id}', [ShiftProgram::class, 'update'])->name('shift.program.update');
+            Route::delete('{id}', [ShiftProgram::class, 'destroy'])->name('shift.program.destroy');
+        });
 
-        Route::get('program/{id}', [SeanceController::class, 'showProgram'])->name('seance.program.show');
-        Route::get('program/create', [SeanceController::class, 'createProgram'])->name('seance.program.create');
-        Route::get('program/edit', [SeanceController::class, 'editProgram'])->name('seance.program.edit');
-        Route::post('program', [SeanceController::class, 'programStore'])->name('seance.program.store');
-        Route::delete('program/{id}', [SeanceController::class, 'programDestroy'])->name('seance.program.destroy');
+        # Доп. услуги смены
+        Route::group(['prefix' => 'service'], function () {
+            Route::get('create', [ShiftService::class, 'create'])->name('shift.service.create');
+            Route::post('', [ShiftService::class, 'store'])->name('shift.service.store');
+            Route::get('{id}', [ShiftService::class, 'show'])->name('shift.service.show');
+            Route::get('edit/{id}', [ShiftService::class, 'edit'])->name('shift.service.edit');
+            Route::put('{id}', [ShiftService::class, 'update'])->name('shift.service.update');
+            Route::delete('{id}', [ShiftService::class, 'destroy'])->name('shift.service.destroy');
+        });
 
-        Route::get('service/{id}', [SeanceController::class, 'showService'])->name('seance.service.show');
-        Route::get('service/create', [SeanceController::class, 'createService'])->name('seance.service.create');
-        Route::get('service/edit', [SeanceController::class, 'editService'])->name('seance.service.edit');
-        Route::post('service', [SeanceController::class, 'serviceStore'])->name('seance.service.store');
-        Route::delete('service', [SeanceController::class, 'serviceDestroy'])->name('seance.service.destroy');
-
-        Route::get('bar/{id}', [SeanceController::class, 'showBar'])->name('seance.bar.show');
-        Route::get('bar/create', [SeanceController::class, 'createBar'])->name('seance.bar.create');
-        Route::get('bar/edit', [SeanceController::class, 'editBar'])->name('seance.bar.edit');
-        Route::post('bar', [SeanceController::class, 'barStore'])->name('seance.bar.store');
-        Route::delete('bar', [SeanceController::class, 'barDestroy'])->name('seance.bar.destroy');
+        # Бар смены
+        Route::group(['prefix' => 'bar'], function () {
+            Route::get('create', [ShiftBar::class, 'create'])->name('shift.bar.create');
+            Route::post('', [ShiftBar::class, 'store'])->name('shift.bar.store');
+            Route::get('{id}', [ShiftBar::class, 'show'])->name('shift.bar.show');
+            Route::get('edit/{id}', [ShiftBar::class, 'edit'])->name('shift.bar.edit');
+            Route::put('{id}', [ShiftBar::class, 'update'])->name('shift.bar.update');
+            Route::delete('{id}', [ShiftBar::class, 'destroy'])->name('shift.bar.destroy');
+        });
     });
 
     # Отчеты

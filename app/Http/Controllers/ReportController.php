@@ -17,7 +17,7 @@ class ReportController extends Controller {
     public function show(int $id): View|RedirectResponse
     {
         if ($id !== (Report::query()->max('report_id') ?: null) && !Gate::allows('root-user')) {
-            return redirect()->route('seance.index');
+            return redirect()->route('shift.index');
         }
 
         $report = Report::query()->findOrFail($id);
