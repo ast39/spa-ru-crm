@@ -29,6 +29,7 @@
                     @php
                         $master_profit = $shift->masters_profits[$user->id] ?? null;
                     @endphp
+
                     @if (is_null($master_profit))
                         @continue
                     @endif

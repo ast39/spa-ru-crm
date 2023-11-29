@@ -64,10 +64,10 @@
                                             <td class="text-start">{{ $service->title }}</td>
                                             <td class="text-center">{{ __('шт') }}</td>
                                             <td class="text-center cb">
-                                                <input class="form-control" name="services[{{ $service->service_id }}][amount]" type="text" />
+                                                <input class="form-control" name="services[{{ $service->service_id }}][amount]" type="text" value="{{ Helper::findServiceInList($seance->services, $service->service_id)['amount'] }}" />
                                             </td>
                                             <td class="text-center cb">
-                                                <input class="form-check-input" name="services[{{ $service->service_id }}][gift]" type="checkbox">
+                                                <input class="form-check-input" name="services[{{ $service->service_id }}][gift]" type="checkbox" {{ Helper::findServiceInList($seance->services, $service->service_id)['gift'] > 0 ? 'checked="checked"'  : '' }} />
                                             </td>
                                         </tr>
                                     @empty
@@ -104,10 +104,10 @@
                                             <td class="text-start">{{ $item->title }}</td>
                                             <td class="text-center">{{ $item->portion }}</td>
                                             <td class="text-center cb">
-                                                <input class="form-control" name="bar[{{ $item->item_id }}][amount]" type="text" />
+                                                <input class="form-control" name="bar[{{ $item->item_id }}][amount]" type="text" value="{{ Helper::findBarInList($seance->bar, $item->item_id)['amount'] }}" />
                                             </td>
                                             <td class="text-center cb">
-                                                <input class="form-check-input" name="bar[{{ $item->item_id }}][gift]" type="checkbox">
+                                                <input class="form-check-input" name="bar[{{ $item->item_id }}][gift]" type="checkbox" {{ Helper::findBarInList($seance->bar, $item->item_id)['gift'] > 0 ? 'checked="checked"'  : '' }} />
                                             </td>
                                         </tr>
                                     @empty

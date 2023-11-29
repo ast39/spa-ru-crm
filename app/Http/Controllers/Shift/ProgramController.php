@@ -149,47 +149,69 @@ class ProgramController extends Controller {
     public function update(SeanceProgramUpdateRequest $request, int $id): RedirectResponse
     {
         $data = $request->validated();
-        $data['admin_id'] = Auth::id();
-
         $seance = SeanceProgram::query()->findOrFail($id);
 
         try {
             DB::beginTransaction();
 
-            $seance->update($data);
+            SeanceService::where('seance_id', $seance->seance_id)->delete();
 
-            SeanceService::query()->where('seance_id', $seance->seance_id)->delete();
+            if (!is_null($data['services'] ?? null)) {
+                foreach ($data['services'] as $service_id => $service_order) {
+                    if ($service_order['amount'] == 0) {
+                        continue;
+                    }
 
-            foreach ($data['services'] as $service_id => $service_order) {
-                SeanceService::query()->create([
-                    'seance_id'  => $id,
-                    'service_id' => $service_id,
-                    'amount'     => 1,
-                    'gift'       => (int) !is_null($service_order['gift'] ?? null),
-                ]);
-            }
-
-            SeanceItem::query()->where('seance_id', $seance->seance_id)->delete();
-
-            foreach ($data['items'] as $item_id => $item_order) {
-                if ($item_order['amount'] == 0) {
-                    continue;
+                    SeanceService::query()->create([
+                        'shift_id' => $seance->shift_id,
+                        'seance_id' => $seance->seance_id,
+                        'admin_id' => $seance->admin_id,
+                        'master_id' => $data['master_id'],
+                        'guest' => $data['guest'] ?? '',
+                        'service_id' => $service_id,
+                        'amount' => $service_order['amount'],
+                        'sale' => $data['sale'],
+                        'gift' => (int) !is_null($service_order['gift'] ?? null),
+                        'pay_type' => $data['pay_type'],
+                        'note' => '',
+                    ]);
                 }
-
-                SeanceItem::query()->create([
-                    'seance_id' => $id,
-                    'item_id'   => $item_id,
-                    'amount'    => $item_order['amount'],
-                ]);
             }
+
+            SeanceBar::where('seance_id', $seance->seance_id)->delete();
+
+            if (!is_null($data['bar'] ?? null)) {
+                foreach ($data['bar'] as $item_id => $item_order) {
+                    if ($item_order['amount'] == 0) {
+                        continue;
+                    }
+
+                    SeanceBar::query()->create([
+                        'shift_id' => $seance->shift_id,
+                        'seance_id' => $seance->seance_id,
+                        'admin_id' => $seance->admin_id,
+                        'guest' => $data['guest'] ?? '',
+                        'item_id' => $item_id,
+                        'amount' => $item_order['amount'],
+                        'sale' => $data['sale'],
+                        'gift' => (int) !is_null($item_order['gift'] ?? null),
+                        'pay_type' => $data['pay_type'],
+                        'note' => '',
+                    ]);
+                }
+            }
+
+            $seance->update(
+                collect($data)->forget(['services', 'bar'])->toArray(),
+            );
 
             DB::commit();
 
-            return redirect()->route('seance.show', $id);
+            return redirect()->route('shift.program.show', $seance->seance_id);
 
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('SeanceController:update', ['message' => $e->getMessage()]);
+            Log::error('SeanceController:store', ['message' => $e->getMessage()]);
 
             return redirect()->back();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Enums\RoleType;
 use App\Http\Enums\SoftStatus;
 use App\Http\Traits\Dictionarable;
 use App\Models\Report;
@@ -46,9 +47,9 @@ class CabinetController extends Controller {
         }
 
         $reports = Report::query()->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(30);
 
-        return view('cabinet.index', [
+        return view('cabinet.owner.index', [
             'reports' => $reports
         ]);
     }
@@ -61,7 +62,7 @@ class CabinetController extends Controller {
      */
     public function admin(int $id = null): RedirectResponse|View
     {
-        if (!Gate::allows('admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('owner')) {
             $id = Report::query()->max('report_id') ?: 0;
 
             return redirect()->route('report.show', $id);
@@ -93,7 +94,7 @@ class CabinetController extends Controller {
      */
     public function master(int $id = null): RedirectResponse|View
     {
-        if (!Gate::allows('master')) {
+        if (!Gate::allows('master') && !Gate::allows('owner')) {
             $id = Report::query()->max('report_id') ?: 0;
 
             return redirect()->route('report.show', $id);
@@ -114,6 +115,44 @@ class CabinetController extends Controller {
         return view('cabinet.master.show', [
             'user' => $user,
             'shifts' => $shifts,
+        ]);
+    }
+
+    /**
+     * Список администраторов
+     *
+     * @return View
+     */
+    public function admins(): View
+    {
+        $admins = User::query()->whereHas('roles', function($query) {
+            $query->where('role_id', RoleType::Administrator->value);
+        })
+            ->get();
+
+        return view('cabinet.admin.index', [
+            'admins' => $admins,
+        ]);
+    }
+
+    /**
+     * Список мастеров
+     *
+     * @return View
+     */
+    public function masters(): View
+    {
+        $masters = User::query()
+            ->whereHas('roles', function($query) {
+                $query->where('role_id', RoleType::Master->value);
+            })
+            ->whereDoesntHave('roles', function($query) {
+                $query->where('role_id', RoleType::Administrator->value);
+            })
+            ->get();
+
+        return view('cabinet.master.index', [
+            'masters' => $masters,
         ]);
     }
 

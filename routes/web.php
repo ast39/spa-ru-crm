@@ -23,6 +23,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     # Кабинет
     Route::get('cabinet', [CabinetController::class, 'index'])->middleware('auth')->name('cabinet.index');
+    Route::get('cabinet/admins', [CabinetController::class, 'admins'])->middleware('auth')->name('cabinet.admins.index');
+    Route::get('cabinet/masters', [CabinetController::class, 'masters'])->middleware('auth')->name('cabinet.masters.index');
     Route::get('cabinet/owner', [CabinetController::class, 'owner'])->middleware('auth')->name('cabinet.owner');
     Route::get('cabinet/admin/{id?}', [CabinetController::class, 'admin'])->middleware('auth')->name('cabinet.admin');
     Route::get('cabinet/master/{id?}', [CabinetController::class, 'master'])->middleware('auth')->name('cabinet.master');

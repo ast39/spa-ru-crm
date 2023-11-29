@@ -91,29 +91,25 @@ class Shift extends Model {
     /**
      * Детализация зарплаты администратора смены
      *
-     * @return array
+     * @return int
      */
-    public function getAdminProfitAttribute(): array
+    public function getAdminProfitAttribute(): int
     {
-        $profits = [
-            'programs' => 0,
-            'services' => 0,
-            'bar' => 0,
-        ];
+        $profit = 0;
 
         foreach ($this->programs as $program) {
-            $profits['programs'] += $program->admin_profit;
+            $profit += $program->admin_profit;
         }
 
         foreach ($this->services as $service) {
-            $profits['services'] += $service->admin_profit;
+            $profit += $service->admin_profit;
         }
 
         foreach ($this->bar as $item) {
-            $profits['bar'] += $item->admin_profit;
+            $profit += $item->admin_profit;
         }
 
-        return $profits;
+        return $profit;
     }
 
     /**

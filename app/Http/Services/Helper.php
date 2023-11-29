@@ -11,6 +11,54 @@ use Illuminate\Support\Collection;
 class Helper {
 
     /**
+     * Помощь в поиске услуги в списке
+     *
+     * @param Collection $list
+     * @param int $id
+     * @return array|int[]
+     */
+    public static function findServiceInList(Collection $list, int $id): array
+    {
+        foreach ($list as $item) {
+            if ($item->service_id == $id) {
+                return [
+                    'amount' => $item->amount,
+                    'gift' => $item->gift,
+                ];
+            }
+        }
+
+        return [
+            'amount' => 0,
+            'gift' => 0,
+        ];
+    }
+
+    /**
+     * Помощь в поиске напитка в списке
+     *
+     * @param Collection $list
+     * @param int $id
+     * @return array|int[]
+     */
+    public static function findBarInList(Collection $list, int $id): array
+    {
+        foreach ($list as $item) {
+            if ($item->item_id == $id) {
+                return [
+                    'amount' => $item->amount,
+                    'gift' => $item->gift,
+                ];
+            }
+        }
+
+        return [
+            'amount' => 0,
+            'gift' => 0,
+        ];
+    }
+
+    /**
      * Роль пользователя словами
      *
      * @param Collection $roles
