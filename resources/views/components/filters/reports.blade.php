@@ -2,21 +2,13 @@
     use App\Http\Services\Helper;
 @endphp
 
-<form method="get" action="{{ route('cabinet.owner') }}" data-filterline__sandwich>
+<form method="get" action="{{ route('report.index') }}" data-filterline__sandwich>
     <div class="mmot-filterline__sandwich dselect-wrapper" data-filterline_sandwich_parent="filter_planing">
-        <div class="mmot-filterline__sandwich__head form-select">Настройки фильтра</div>
+        <div class="mmot-filterline__sandwich__head form-select">Фильтр</div>
     </div>
 
     <div class="mmot-filterline-justify mmot-filterline__sandwich__list hide" data-filterline_sandwich_child="filter_planing">
         <div class="mmot-filterline">
-
-            <div class="mmot-filterline__one" data-input_clear_content>
-                <select name="user" id="user" class="form-select form-control">
-                    @foreach($users as $u)
-                        <option title="{{ $u->name }}" {{ (request()->user ?? $user->id ?? 0) == $u->id ? 'selected' : '' }} value="{{ $u->id }}">{{ $u->name }}</option>
-                    @endforeach
-                </select>
-            </div>
 
             <div class="mmot-filterline__one mmot-inputwithico-left" data-input_clear_content>
                 <svg class="mmot-inputwithico-left__ico"><use xlink:href="#site-calendar"></use></svg>
@@ -32,7 +24,7 @@
 
         <div class="mmot-filterline">
             <div class="mmot-filterline__one">
-                <a href="{{ route('cabinet.owner') }}" type="button" class="btn btn-secondary w block">{{ __('Сбросить') }}</a>
+                <a href="{{ route('report.index') }}" type="button" class="btn btn-secondary w block">{{ __('Сбросить') }}</a>
             </div>
 
             <div class="mmot-filterline__one">

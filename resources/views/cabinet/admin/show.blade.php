@@ -16,8 +16,8 @@
                 <thead class="table-secondary">
                 <tr>
                     <th class="text-start">Смена</th>
-                    <th class="text-end">Комиссия</th>
-                    <th class="text-end">С программ</th>
+                    <th class="text-end">% администратора</th>
+                    <th class="text-end">% с программ</th>
                     <th class="text-end">Заработок</th>
                 </tr>
                 </thead>
@@ -29,24 +29,27 @@
 
                 @forelse($shifts as $shift)
                     @php
+                        $admin_profit = $shift->opened_admin_id != $user->id
+                            ? 0
+                            : $shift->admin_profit;
                         $master_profit = $shift->masters_profits[$user->id]['profit'] ?? 0;
                     @endphp
 
-                    @if (is_null($master_profit) && $shift->admin_profit == 0)
+                    @if (is_null($master_profit) && $admin_profit == 0)
                         @continue
                     @endif
 
                     <tr>
                         <td class="text-start">{{ $shift->title }}</td>
-                        <td class="text-end">{{ number_format($shift->admin_profit, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($admin_profit, 0, '.', ' ') }} р.</td>
                         <td class="text-end">{{ number_format($master_profit, 0, '.', ' ') }} р.</td>
-                        <td class="text-end">{{ number_format($shift->admin_profit + $master_profit, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($admin_profit + $master_profit, 0, '.', ' ') }} р.</td>
                     </tr>
 
                     @php
-                        $commissions += $shift->admin_profit;
+                        $commissions += $admin_profit;
                         $programs += $master_profit;
-                        $total += ($shift->admin_profit + $master_profit);
+                        $total += ($admin_profit + $master_profit);
                     @endphp
                 @empty
                     <tr>

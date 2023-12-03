@@ -22,7 +22,7 @@ class UserController extends Controller {
 
     public function __construct()
     {
-        $this->middleware('access.owner');
+        $this->middleware('access.admin');
     }
 
     /**
@@ -42,7 +42,7 @@ class UserController extends Controller {
 
         $page_users = User::filter($filter)
             ->where('id', '!=', 1)
-            ->orderByDesc('created_at')
+            ->orderBy('name')
             ->paginate(config('limits.user'));
 
         return view('user.index', [

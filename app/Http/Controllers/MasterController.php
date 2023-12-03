@@ -41,7 +41,7 @@ class MasterController extends Controller {
 
         $page_masters = User::filter($filter)
             ->onlyMasters()
-            ->orderByDesc('created_at')
+            ->orderBy('name')
             ->paginate(config('limits.master'));
 
         return view('master.index', [

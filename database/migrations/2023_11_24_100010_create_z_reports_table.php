@@ -78,6 +78,11 @@ return new class extends Migration
                 ->default(0)
                 ->comment('Доход заведения');
 
+            $table->unsignedFloat('stock')
+                ->nullable()
+                ->default(0)
+                ->comment('Остаток в кассе');
+
             $table->text('additional')
                 ->nullable()
                 ->default(null)

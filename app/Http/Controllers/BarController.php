@@ -34,7 +34,7 @@ class BarController extends Controller {
         ]);
 
         $page_bar = Bar::filter($filter)
-            ->orderByDesc('created_at')
+            ->orderBy('title')
             ->paginate(config('limits.bar'));
 
         return view('bar.index', [

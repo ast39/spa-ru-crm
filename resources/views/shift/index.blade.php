@@ -187,6 +187,9 @@
                                             <div class="mb-3">
                                                 <input type="text" class="form-control" name="expenses" placeholder="Расходы"/>
                                             </div>
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control" name="stock" placeholder="{{ __('Остаток в кассе') }}"/>
+                                            </div>
                                             <textarea style="width: 100%; height: 120px" class="form-control mb-2" name="additional" placeholder="Заметки по смене"></textarea>
                                             <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                                                 <button title="Закрыть смену" type="submit" class="btn btn-danger me-1 rounded" onclick="return confirm('Вы уверены, что хотите закрыть смену?')">
@@ -211,6 +214,9 @@
                             <div class="mb-3">
                                 <input type="text" class="form-control" name="expenses" placeholder="{{ __('Расходы') }}"/>
                             </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="stock" placeholder="{{ __('Остаток в кассе') }}"/>
+                            </div>
                             <textarea style="width: 100%; height: 120px" class="form-control mb-2" name="additional" placeholder="{{ __('Заметки по смене') }}"></textarea>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                                 <button title="Закрыть смену" type="submit" class="btn btn-danger me-1 rounded" onclick="return confirm('{{ __('Вы уверены, что хотите закрыть смену?') }}')">{{ __('Закрыть смену') }}</button>
@@ -221,17 +227,6 @@
 
                     {{-- Последняя смена закрыта --}}
                 @else
-
-                    {{-- Последняя смена - это текущая смена --}}
-                    @if(ShiftHelper::lastShiftIsCurrentShift())
-
-                        {{-- Ждем следующей смены --}}
-                        <div
-                            class="text-center p-2 mb-2 bg-secondary bg-gradient text-white rounded">{{ __('Смена уже закрыта, новую можно открыть не ранее 11:00') }}</div>
-
-                        {{-- Уже время новой смены и страрая смена закрыта --}}
-                    @else
-
                         {{-- Можно открыть новую смену --}}
                         <form method="post" action="{{ route('shift.open') }}">
                             @csrf
@@ -241,8 +236,6 @@
                                 <button type="submit" title="Delete" onclick="return confirm('{{ __('"Вы уверены, что хотите открыть новую смену?') }}')" class="btn btn-primary me-1 rounded">{{ __('Открыть смену') }}</button>
                             </div>
                         </form>
-
-                    @endif
 
                 @endif
 

@@ -109,6 +109,10 @@
                         - $report->admin_profit - $report->masters_profit - $report->expenses - $report->sale_sum,
                         0, '.', ' ') }} р.</td>
                 </tr>
+                <tr>
+                    <th class="text-start">{{ __('Остаток в кассе') }}</th>
+                    <td class="text-end">{{ number_format($report->stock, 0, '.', ' ') }} р.</td>
+                </tr>
 
                 </tbody>
             </table>

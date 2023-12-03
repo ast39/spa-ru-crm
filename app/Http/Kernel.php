@@ -3,7 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\AccessForAdmin;
-use App\Http\Middleware\accessForOwner;
+use App\Http\Middleware\AccessForOwner;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

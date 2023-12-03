@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Enums\RoleType;
 use App\Http\Enums\SoftStatus;
+use App\Http\Filters\CabinetOwnerFilter;
+use App\Http\Filters\ReportFilter;
+use App\Http\Requests\Cabinet\CabinetOwnerFilterRequest;
 use App\Http\Traits\Dictionarable;
 use App\Models\Report;
 use App\Models\Shift;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -38,19 +42,39 @@ class CabinetController extends Controller {
         }
     }
 
-    public function owner(): RedirectResponse|View
+    /**
+     * Кабинет руководителя (зарплаты всех сотрудников)
+     *
+     * @param CabinetOwnerFilterRequest $request
+     * @return RedirectResponse|View
+     * @throws BindingResolutionException
+     */
+    public function owner(CabinetOwnerFilterRequest $request): RedirectResponse|View
     {
         if (!Gate::allows('owner')) {
-            $id = Report::query()->max('report_id') ?: 0;
-
-            return redirect()->route('report.show', $id);
+            return redirect()->route('cabinet.index');
         }
 
-        $reports = Report::query()->orderByDesc('created_at')
+        $data = $request->validated();
+        if (is_null($data['user'] ?? null)) {
+            $data['user'] = User::query()->max('id');
+        }
+
+        $filter = app()->make(CabinetOwnerFilter::class, [
+            'queryParams' => array_filter($data)
+        ]);
+
+        $shifts = Shift::with(['shiftPrograms', 'shiftServices'])
+            ->filter($filter)
+            ->where('status', SoftStatus::On->value)
             ->paginate(30);
 
         return view('cabinet.owner.index', [
-            'reports' => $reports
+            'shifts' => $shifts,
+            'user' => User::query()->find($data['user']),
+            'users' => User::query()
+                ->orderBy('name')
+                ->get(),
         ]);
     }
 
@@ -63,9 +87,7 @@ class CabinetController extends Controller {
     public function admin(int $id = null): RedirectResponse|View
     {
         if (!Gate::allows('admin') && !Gate::allows('owner')) {
-            $id = Report::query()->max('report_id') ?: 0;
-
-            return redirect()->route('report.show', $id);
+            return redirect()->route('cabinet.index');
         }
 
         if (!Gate::allows('owner') || is_null($id)) {
@@ -94,13 +116,9 @@ class CabinetController extends Controller {
      */
     public function master(int $id = null): RedirectResponse|View
     {
-        if (!Gate::allows('master') && !Gate::allows('owner')) {
-            $id = Report::query()->max('report_id') ?: 0;
+        $id = Report::query()->max('report_id') ?: 0;
 
-            return redirect()->route('report.show', $id);
-        }
-
-        if (!Gate::allows('owner') || is_null($id)) {
+        if ((!Gate::allows('owner') && !Gate::allows('admin')) || is_null($id)) {
             $id = Auth::id();
         }
 
@@ -115,44 +133,6 @@ class CabinetController extends Controller {
         return view('cabinet.master.show', [
             'user' => $user,
             'shifts' => $shifts,
-        ]);
-    }
-
-    /**
-     * Список администраторов
-     *
-     * @return View
-     */
-    public function admins(): View
-    {
-        $admins = User::query()->whereHas('roles', function($query) {
-            $query->where('role_id', RoleType::Administrator->value);
-        })
-            ->get();
-
-        return view('cabinet.admin.index', [
-            'admins' => $admins,
-        ]);
-    }
-
-    /**
-     * Список мастеров
-     *
-     * @return View
-     */
-    public function masters(): View
-    {
-        $masters = User::query()
-            ->whereHas('roles', function($query) {
-                $query->where('role_id', RoleType::Master->value);
-            })
-            ->whereDoesntHave('roles', function($query) {
-                $query->where('role_id', RoleType::Administrator->value);
-            })
-            ->get();
-
-        return view('cabinet.master.index', [
-            'masters' => $masters,
         ]);
     }
 

@@ -34,7 +34,7 @@ class ServiceController extends Controller {
         ]);
 
         $page_services = Service::filter($filter)
-            ->orderByDesc('created_at')
+            ->orderBy('title')
             ->paginate(config('limits.service'));
 
         return view('service.index', [

@@ -41,7 +41,7 @@ class AdminController extends Controller {
 
         $page_admins = User::filter($filter)
             ->onlyAdmins()
-            ->orderByDesc('created_at')
+            ->orderBy('name')
             ->paginate(config('limits.admin'));
 
         return view('admin.index', [

@@ -97,7 +97,9 @@ class SeanceService extends Model {
      */
     public function getAdminProfitAttribute(): int
     {
-        return Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->total_price / 100;
+        return $this->admin_id == $this->master_id
+            ? 0
+            : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->total_price / 100;
     }
 
     /**

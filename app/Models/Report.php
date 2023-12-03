@@ -52,7 +52,7 @@ class Report extends Model {
         'report_id', 'shift_id', 'clients', 'cash_profit', 'card_profit', 'phone_profit',
         'programs_profit', 'services_profit', 'bar_profit',
         'admin_profit', 'masters_profit', 'sale_sum', 'owner_profit',
-        'expenses', 'additional',
+        'expenses', 'stock', 'additional',
         'created_at', 'updated_at',
     ];
 

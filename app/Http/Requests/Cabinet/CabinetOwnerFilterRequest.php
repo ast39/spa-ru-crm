@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Shift;
+namespace App\Http\Requests\Cabinet;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ShiftCloseStoreRequest extends FormRequest
+class CabinetOwnerFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,9 @@ class ShiftCloseStoreRequest extends FormRequest
     {
         return [
 
-            'expenses' => ['nullable', 'integer'],
-            'stock' => ['nullable', 'integer'],
-            'additional' => ['nullable', 'string'],
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d'],
+            'user' => ['nullable', 'exists:users,id'],
         ];
     }
 }

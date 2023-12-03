@@ -13,9 +13,12 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav me-auto">
                 @auth
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('cabinet.index') }}">{{ __('Кабинет') }}</a>
+                    </li>
                     @if(Gate::allows('owner') || Gate::allows('admin'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dict.user.index') }}">{{ __('Пользователи') }}</a>
+                            <a class="nav-link" href="{{ route('dict.user.index') }}">{{ __('Сотрудники') }}</a>
                         </li>
                     @endif
                     <li class="nav-item">
@@ -35,7 +38,11 @@
                     @endif
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('cabinet.owner') }}">{{ __('Последний отчет') }}</a>
+                        @if(Gate::allows('owner'))
+                            <a class="nav-link" href="{{ route('report.index') }}">{{ __('Отчеты') }}</a>
+                        @elseif(Gate::allows('admin'))
+                            <a class="nav-link" href="{{ route('report.show') }}">{{ __('Последний отчет') }}</a>
+                        @endif
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('shift.index') }}">{{ __('Смена') }}</a>

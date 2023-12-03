@@ -93,7 +93,6 @@ class ShiftController extends Controller {
         $shift = Shift::query()->find($shift_id);
 
         $data['shift_id'] = $shift_id;
-        $data['admin_id'] = $shift->opened_admin_id;
         $data['clients'] = $dl->guests();
         $data['cash_profit'] = $dl->cash();
         $data['card_profit'] = $dl->card();

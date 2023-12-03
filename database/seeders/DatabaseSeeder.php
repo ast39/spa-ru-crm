@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(Programs::class);
         $this->call(Services::class);
         $this->call(BarItems::class);
+        $this->call(WorkFlow::class);
     }
 }

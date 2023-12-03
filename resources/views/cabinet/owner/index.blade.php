@@ -4,64 +4,74 @@
 
 @extends('layouts.app')
 
-@section('title', __('Рандеву - Сводка'))
+@section('title', __('Кабинет руководителя'))
 
 @section('content')
-    @include('components/tabs/cabinet')
 
     <div class="card bg-primary text-white">
         <div class="card-header">{{ __('Сводка') }}</div>
 
         <div class="card-body bg-light">
 
+            <!-- Фильтр -->
+            <div class="mmot-margin20">
+                @include('components/filters/cabinet')
+            </div>
+
             <table class="table table-bordered">
                 <thead class="table-secondary">
                 <tr>
                     <th class="text-start">Смена</th>
-                    <th class="text-end">Доходы</th>
-                    <th class="text-end">Расходы</th>
-                    <th class="text-end">Баланс</th>
+                    <th class="text-end">Администратор</th>
+                    <th class="text-end">Мастер</th>
+                    <th class="text-end">Заработок</th>
                 </tr>
                 </thead>
 
                 <tbody>
                 @php
-                    $profits = $wd = $balance = 0;
+                    $commissions = $programs = $total = 0;
                 @endphp
 
-                @forelse($reports as $report)
+                @forelse($shifts as $shift)
+                    @php
+                        $admin_profit = $shift->opened_admin_id != $user->id
+                            ? 0
+                            : $shift->admin_profit;
+                        $master_profit = $shift->masters_profits[$user->id]['profit'] ?? 0;
+                    @endphp
+
+                    @if (is_null($master_profit) && $admin_profit == 0)
+                        @continue
+                    @endif
+
                     <tr>
-                        <td class="text-start"><a class="text-primary" href="{{ route('report.show', $report->report_id) }}">{{ $report->shift->title }}</a></td>
-                        <td class="text-end">{{ number_format($report->cash_profit + $report->card_profit + $report->phone_profit, 0, '.', ' ') }} р.</td>
-                        <td class="text-end">{{ number_format(0 - $report->admin_profit - $report->masters_profit - $report->expenses - $report->sale_sum, 0, '.', ' ') }} р.</td>
-                        <td class="text-end">{{ number_format($report->cash_profit + $report->card_profit + $report->phone_profit - $report->admin_profit - $report->masters_profit - $report->expenses - $report->sale_sum, 0, '.', ' ') }} р.</td>
+                        <td class="text-start">{{ $shift->title }}</td>
+                        <td class="text-end">{{ number_format($admin_profit, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($master_profit, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($admin_profit + $master_profit, 0, '.', ' ') }} р.</td>
                     </tr>
 
                     @php
-                        $profits += ($report->cash_profit + $report->card_profit + $report->phone_profit);
-                        $wd -= ($report->admin_profit + $report->masters_profit + $report->expenses + $report->sale_sum);
-                        $balance += ($report->cash_profit + $report->card_profit + $report->phone_profit - $report->admin_profit - $report->masters_profit - $report->expenses - $report->sale_sum)
+                        $commissions += $admin_profit;
+                        $programs += $master_profit;
+                        $total += ($admin_profit + $master_profit);
                     @endphp
                 @empty
                     <tr>
-                        <td colspan="2">
-                            <div class="text-center p-2 mb-2 bg-secondary bg-gradient text-white rounded">{{ ('Отчетностей нет') }}</div>
+                        <td colspan="4">
+                            <div class="text-center p-2 mb-2 bg-secondary bg-gradient text-white rounded">{{ ('Вы не выходили в смену за последний месяц') }}</div>
                         </td>
                     </tr>
                 @endforelse
 
-                <tr><td colspan="4"></td></tr>
-
                 <tr>
                     <td class="text-end">{{ __('За месяц') }}</td>
-                    <td class="text-end">{{ number_format($profits, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($wd, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($balance, 0, '.', ' ') }} р.</td>
+                    <td class="text-end">{{ number_format($commissions, 0, '.', ' ') }} р.</td>
+                    <td class="text-end">{{ number_format($programs, 0, '.', ' ') }} р.</td>
+                    <td class="text-end">{{ number_format($total, 0, '.', ' ') }} р.</td>
                 </tr>
 
-                <div>
-                    {{ $reports->links() }}
-                </div>
                 </tbody>
             </table>
 

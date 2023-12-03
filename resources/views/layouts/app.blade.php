@@ -10,6 +10,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="{{ asset('images/logo.png') }}">
 
+    <!-- PWA  -->
+    <meta name="theme-color" content="#6777ef"/>
+    <link rel="apple-touch-icon" href="{{ asset('/images/logo.png') }}">
+    <link rel="manifest" href="{{ asset('/manifest.json') }}">
+
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -61,6 +66,18 @@
 
     {{-- JS grubber --}}
     @stack('js')
+
+    <script src="{{ asset('/sw.js') }}"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            try {
+                await navigator.serviceWorker.register("/sw.js");
+                console.log("Service Worker успешно зарегистрирован");
+            } catch (e) {
+                console.log("Service Worker не был зарегистрирован");
+            }
+        }
+    </script>
 
 </body>
 </html>

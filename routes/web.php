@@ -12,6 +12,9 @@ use App\Http\Controllers\Shift\ServiceController as ShiftService;
 use App\Http\Controllers\Shift\BarController as ShiftBar;
 use App\Http\Controllers\Shift\ShiftController;
 use App\Http\Controllers\UserController;
+use App\Http\Services\DailyReport;
+use App\Http\Services\ShiftHelper;
+use App\Models\Shift;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,15 +22,45 @@ Route::get('/', function () {
     return redirect('/cabinet');
 });
 
+Route::get('tst', function() {
+    $dl = new DailyReport(ShiftHelper::lastShift());
+
+    $shift_id = ShiftHelper::currentShiftId();
+    $shift = Shift::query()->find($shift_id);
+
+    $data['shift_id'] = $shift_id;
+    $data['admin_id'] = $shift->opened_admin_id;
+    $data['clients'] = $dl->guests();
+    $data['cash_profit'] = $dl->cash();
+    $data['card_profit'] = $dl->card();
+    $data['phone_profit'] = $dl->phone();
+    $data['programs_profit'] = $dl->programs();
+    $data['services_profit'] = $dl->services();
+    $data['bar_profit'] = $dl->bar();
+    $data['admin_profit'] = $dl->adminProfit();
+    $data['masters_profit'] = $dl->mastersProfit();
+    $data['sale_sum'] = $dl->saleSum();
+    $data['owner_profit'] = $dl->ownerProfit();
+
+    dd($data);
+});
+
 Route::group(['middleware' => ['auth']], function() {
 
     # Кабинет
-    Route::get('cabinet', [CabinetController::class, 'index'])->middleware('auth')->name('cabinet.index');
-    Route::get('cabinet/admins', [CabinetController::class, 'admins'])->middleware('auth')->name('cabinet.admins.index');
-    Route::get('cabinet/masters', [CabinetController::class, 'masters'])->middleware('auth')->name('cabinet.masters.index');
-    Route::get('cabinet/owner', [CabinetController::class, 'owner'])->middleware('auth')->name('cabinet.owner');
-    Route::get('cabinet/admin/{id?}', [CabinetController::class, 'admin'])->middleware('auth')->name('cabinet.admin');
-    Route::get('cabinet/master/{id?}', [CabinetController::class, 'master'])->middleware('auth')->name('cabinet.master');
+    Route::group(['prefix' => 'cabinet'], function () {
+        Route::get('', [CabinetController::class, 'index'])->middleware('auth')->name('cabinet.index');
+        Route::get('owner', [CabinetController::class, 'owner'])->middleware('auth')->name('cabinet.owner');
+        Route::get('admin/{id?}', [CabinetController::class, 'admin'])->middleware('auth')->name('cabinet.admin');
+        Route::get('master/{id?}', [CabinetController::class, 'master'])->middleware('auth')->name('cabinet.master');
+    });
+
+    # Отчеты
+    Route::group(['prefix' => 'report'], function () {
+
+        Route::get('', [ReportController::class, 'index'])->name('report.index');
+        Route::get('show/{id?}', [ReportController::class, 'show'])->name('report.show');
+    });
 
     # Справочники
     Route::group(['prefix' => 'dict'], function () {
@@ -140,13 +173,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::put('{id}', [ShiftBar::class, 'update'])->name('shift.bar.update');
             Route::delete('{id}', [ShiftBar::class, 'destroy'])->name('shift.bar.destroy');
         });
-    });
-
-    # Отчеты
-    Route::group(['prefix' => 'report'], function () {
-
-        Route::post('', [ReportController::class, 'store'])->name('report.store');
-        Route::get('{id}', [ReportController::class, 'show'])->name('report.show');
     });
 
 });

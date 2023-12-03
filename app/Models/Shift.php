@@ -48,6 +48,36 @@ class Shift extends Model {
         return $this->belongsTo(User::class, 'closed_admin_id', 'id');
     }
 
+    /**
+     * Программы смены
+     *
+     * @return HasMany
+     */
+    public function shiftPrograms(): HasMany
+    {
+        return $this->hasMany(SeanceProgram::class, 'shift_id', 'shift_id');
+    }
+
+    /**
+     * Доп. услуги смены
+     *
+     * @return HasMany
+     */
+    public function shiftServices(): HasMany
+    {
+        return $this->hasMany(SeanceService::class, 'shift_id', 'shift_id');
+    }
+
+    /**
+     * Напитки смены
+     *
+     * @return HasMany
+     */
+    public function shiftBar(): HasMany
+    {
+        return $this->hasMany(SeanceBar::class, 'shift_id', 'shift_id');
+    }
+
 
     /**
      * Программы смены
@@ -148,6 +178,9 @@ class Shift extends Model {
     protected $with = [
         'openedAdmin',
         'closedAdmin',
+        'shiftPrograms',
+        'shiftServices',
+        'shiftBar'
     ];
 
     protected $appends = [
