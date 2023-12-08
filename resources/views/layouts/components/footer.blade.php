@@ -16,8 +16,8 @@
                 </div>
 
                 <div class="col-md-5 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-4">Контакты</h6>
-                    <p><i class="fas fa-home me-3">Адрес: </i> Россия, Калининград, 236048</p>
+                    <h6 class="text-uppercase fw-bold mb-4">{{ __('Контакты') }}</h6>
+                    <p><i class="fas fa-home me-3">{{ __('Адрес:') }} </i> Россия, Калининград, 236048</p>
                     <p><i class="fas fa-envelope me-3">Email:</i> alexandr.status@gmail.com</p>
                     <p><i class="fas fa-phone me-3">Тел.:</i> +7 911 487 7251</p>
                 </div>

@@ -4,21 +4,21 @@
 
 @extends('layouts.app')
 
-@section('title', __('Кабинет администратора: ') . $user->name)
+@section('title', __('Кабинет администратора') . ' : ' . $user->name)
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Кабинет администратора: ') . $user->name }}</div>
+        <div class="card-header">{{ __('Кабинет администратора') . ' : ' . $user->name }}</div>
 
         <div class="card-body bg-light">
 
             <table class="table table-bordered">
                 <thead class="table-secondary">
                 <tr>
-                    <th class="text-start">Смена</th>
-                    <th class="text-end">% администратора</th>
-                    <th class="text-end">% с программ</th>
-                    <th class="text-end">Заработок</th>
+                    <th class="text-start">{{ __('Смена') }}</th>
+                    <th class="text-end">{{ __('% администратора') }}</th>
+                    <th class="text-end">{{ __('% с программ') }}</th>
+                    <th class="text-end">{{ __('Заработок') }}</th>
                 </tr>
                 </thead>
 
@@ -41,8 +41,8 @@
 
                     <tr>
                         <td class="text-start">{{ $shift->title }}</td>
-                        <td class="text-end">{{ number_format($admin_profit, 0, '.', ' ') }} р.</td>
-                        <td class="text-end">{{ number_format($master_profit, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($admin_profit, 0, '.', ' ') }} {{ __('р.') }}</td>
+                        <td class="text-end">{{ number_format($master_profit, 0, '.', ' ') }} {{ __('р.') }}</td>
                         <td class="text-end">{{ number_format($admin_profit + $master_profit, 0, '.', ' ') }} р.</td>
                     </tr>
 
@@ -63,9 +63,9 @@
 
                 <tr>
                     <td class="text-end">{{ __('За месяц') }}</td>
-                    <td class="text-end">{{ number_format($commissions, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($programs, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($total, 0, '.', ' ') }} р.</td>
+                    <td class="text-end">{{ number_format($commissions, 0, '.', ' ') }} {{ __('р.') }}</td>
+                    <td class="text-end">{{ number_format($programs, 0, '.', ' ') }} {{ __('р.') }}</td>
+                    <td class="text-end">{{ number_format($total, 0, '.', ' ') }} {{ __('р.') }}</td>
                 </tr>
                 </tbody>
             </table>

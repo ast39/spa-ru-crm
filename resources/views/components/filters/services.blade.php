@@ -1,10 +1,10 @@
 @php
-    use App\Http\Libs\Helper;
+
 @endphp
 
 <form method="get" action="{{ route('dict.service.index') }}" data-filterline__sandwich>
     <div class="mmot-filterline__sandwich dselect-wrapper" data-filterline_sandwich_parent="filter_planing">
-        <div class="mmot-filterline__sandwich__head form-select">Настройки фильтра</div>
+        <div class="mmot-filterline__sandwich__head form-select">{{ __('Фильтр') }}</div>
     </div>
 
     <div class="mmot-filterline-justify mmot-filterline__sandwich__list hide" data-filterline_sandwich_child="filter_planing">

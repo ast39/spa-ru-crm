@@ -5,7 +5,7 @@
 
 @extends('layouts.app')
 
-@section('title', $service->title)
+@section('title', __('Услуга') . ' : ' .  $service->title)
 
 @section('content')
     @include('components/tabs/price')
@@ -47,7 +47,7 @@
                     <a href="{{ route('dict.service.index') }}" class="btn btn-secondary me-1 rounded">{{ __('Список') }}</a>
                     @if(Gate::allows('owner'))
                         <a href="{{ route('dict.service.edit', $service->service_id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
-                        <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить доп. услугу?')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
+                        <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить доп. услугу?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
                         <a href="{{ route('dict.service.create') }}" class="btn btn-primary rounded">{{ __('Добавить услугу') }}</a>
                     @endif
                 </div>

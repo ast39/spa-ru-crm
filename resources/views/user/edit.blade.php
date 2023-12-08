@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', __('Обновление пользователя') . ': ' . $user->name)
+@section('title', __('Обновление сотрудника') . ': ' . $user->name)
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Обновление пользователя') . ' : ' . $user->name }}</div>
+        <div class="card-header">{{ __('Обновление сотрудника') . ' : ' . $user->name }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.user.update', $user->id) }}">

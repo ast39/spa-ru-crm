@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', __('Новый пользователь'))
+@section('title', __('Новый сотрудник'))
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Новый пользователь') }}</div>
+        <div class="card-header">{{ __('Новый сотрудник') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.user.store') }}">
@@ -77,3 +77,4 @@
         <div class="card-footer bg-light border-0"></div>
     </div>
 @endsection
+

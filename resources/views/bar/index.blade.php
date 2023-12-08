@@ -1,11 +1,10 @@
 @php
-    use App\Http\Services\Helper;
     use Illuminate\Support\Facades\Gate;
 @endphp
 
 @extends('layouts.app')
 
-@section('title', 'Бар')
+@section('title', __('Бар'))
 
 @section('content')
     @include('components/tabs/price')

@@ -5,7 +5,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Добавить программу')
+@section('title', __('Добавить программу'))
 
 @section('content')
     @include('components/tabs/price')
@@ -88,3 +88,4 @@
         </div>
     </div>
 @endsection
+

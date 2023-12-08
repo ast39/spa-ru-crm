@@ -4,11 +4,11 @@
 
 @extends('layouts.app')
 
-@section('title', __('Пользователь') . ' : ' . $user->name)
+@section('title', __('Сотрудник') . ' : ' . $user->name)
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Пользователь') }} {{ $user->name }}</div>
+        <div class="card-header">{{ __('Сотрудник') }} {{ $user->name }}</div>
 
         <div class="card-body bg-light">
             <table class="table table-striped table-borderless">
@@ -42,8 +42,8 @@
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                     <a href="{{ route('dict.user.index') }}" class="btn btn-secondary me-1 rounded">{{ __('Назад') }}</a>
                     <a href="{{ route('dict.user.edit', $user->id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
-                    <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить администратора?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
-                    <a href="{{ route('dict.user.create') }}" class="btn btn-primary rounded">{{ __('Добавить администратора') }}</a>
+                    <button type="submit" onclick="return confirm('{{ __('Вы уверены, что хотите удалить сотрудника?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
+                    <a href="{{ route('dict.user.create') }}" class="btn btn-primary rounded">{{ __('Добавить сотрудника') }}</a>
                 </div>
             </form>
         </div>

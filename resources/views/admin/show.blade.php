@@ -51,7 +51,7 @@
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                     <a href="{{ route('dict.admin.index') }}" class="btn btn-secondary me-1 rounded">{{ __('Назад') }}</a>
                     <a href="{{ route('dict.admin.edit', $admin->id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
-                    <button type="submit" title="Delete" onclick="return confirm('{{ __('"Вы уверены, что хотите убрать пользователя с должности администратора?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
+                    <button type="submit" title="Delete" onclick="return confirm('{{ __('"Вы уверены, что хотите убрать сотрудника с должности администратора?') }}')" class="btn btn-danger me-1 rounded">{{ __('Убрать') }}</button>
                 </div>
             </form>
         </div>

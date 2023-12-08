@@ -1,16 +1,16 @@
 @php
-    use App\Http\Libs\Helper;
+
 @endphp
 
 @extends('layouts.app')
 
-@section('title', 'Обновление: ' . $bar->title)
+@section('title', __('Обновление') . ' : ' . $bar->title)
 
 @section('content')
     @include('components/tabs/price')
 
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Обновление  "' . $bar->title . '"') }}</div>
+        <div class="card-header">{{ __('Обновление' . ' : ' . $bar->title) }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.bar.update', $bar->item_id) }}">

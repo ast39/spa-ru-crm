@@ -1,16 +1,16 @@
 @php
-    use App\Http\Libs\Helper;
+
 @endphp
 
 @extends('layouts.app')
 
-@section('title', 'Обновление: ' . $service->title)
+@section('title', __('Обновление услуги') . ' : ' . $service->title)
 
 @section('content')
     @include('components/tabs/price')
 
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Обновление  "' . $service->title . '"') }}</div>
+        <div class="card-header">{{ __('Обновление услуги' . ' : ' . $service->title) }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.service.update', $service->service_id) }}">

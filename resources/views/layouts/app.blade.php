@@ -72,9 +72,9 @@
         if ('serviceWorker' in navigator) {
             try {
                 await navigator.serviceWorker.register("/sw.js");
-                console.log("Service Worker успешно зарегистрирован");
+                console.log("Service Worker registered");
             } catch (e) {
-                console.log("Service Worker не был зарегистрирован");
+                console.log("Service Worker not registered");
             }
         }
     </script>

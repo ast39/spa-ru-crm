@@ -1,6 +1,6 @@
 <div class="nav nav-pills mb-2" id="nav-tab" role="tablist">
     @if(Gate::allows('owner'))
-        <a href="{{ route('dict.user.index') }}" class="nav-link {{ request()->route()->getName() == 'dict.user.index' ? 'active' : '' }}">{{ __('Пользователи') }}</a>
+        <a href="{{ route('dict.user.index') }}" class="nav-link {{ request()->route()->getName() == 'dict.user.index' ? 'active' : '' }}">{{ __('Сотрудники') }}</a>
         <a href="{{ route('dict.admin.index') }}" class="nav-link {{ request()->route()->getName() == 'dict.admin.index' ? 'active' : '' }}">{{ __('Администраторы') }}</a>
     @endif
 

@@ -1,5 +1,5 @@
 @php
-    use App\Http\Services\Helper;
+
 @endphp
 
 @extends('layouts.app')
@@ -9,7 +9,7 @@
 @section('content')
 
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Сводка') }}</div>
+        <div class="card-header">{{ __('Отчеты') }}</div>
 
         <div class="card-body bg-light">
 
@@ -21,10 +21,10 @@
             <table class="table table-bordered">
                 <thead class="table-secondary">
                 <tr>
-                    <th class="text-start">Смена</th>
-                    <th class="text-end">Доходы</th>
-                    <th class="text-end">Расходы</th>
-                    <th class="text-end">Баланс</th>
+                    <th class="text-start">{{ __('Смена') }}</th>
+                    <th class="text-end">{{ __('Доходы') }}</th>
+                    <th class="text-end">{{ __('Расходы') }}</th>
+                    <th class="text-end">{{ __('Баланс') }}</th>
                 </tr>
                 </thead>
 
@@ -58,9 +58,9 @@
 
                 <tr>
                     <td class="text-end">{{ __('За месяц') }}</td>
-                    <td class="text-end">{{ number_format($profits, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($wd, 0, '.', ' ') }} р.</td>
-                    <td class="text-end">{{ number_format($balance, 0, '.', ' ') }} р.</td>
+                    <td class="text-end">{{ number_format($profits, 0, '.', ' ') }} {{ __('р.') }}</td>
+                    <td class="text-end">{{ number_format($wd, 0, '.', ' ') }} {{ __('р.') }}</td>
+                    <td class="text-end">{{ number_format($balance, 0, '.', ' ') }} {{ __('р.') }}</td>
                 </tr>
 
                 <div>

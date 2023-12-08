@@ -4,7 +4,7 @@
 
 @extends('layouts.app')
 
-@section('title', __('Рандеву - Администраторы'))
+@section('title', __('Кабинет') . ' : ' . __('Администраторы'))
 
 @section('content')
     @include('components/tabs/cabinet')
@@ -18,7 +18,7 @@
                 <thead class="table-secondary">
                 <tr>
                     <th class="text-start">#</th>
-                    <th class="text-start">Имя</th>
+                    <th class="text-start">{{ __('Имя') }}</th>
                 </tr>
                 </thead>
 

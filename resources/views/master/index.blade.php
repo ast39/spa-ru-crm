@@ -46,7 +46,7 @@
                                 <div class="mmot-table__action">
                                     <a title="Изменить" href="{{ route('dict.master.edit', $master->id) }}" class="mmot-table__action__one"><svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg></a>
                                     @if(Gate::allows('owner'))
-                                        <button type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите убрать пользователя с должности мастера?') }}')"><svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg></button>
+                                        <button type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите убрать сотрудника с должности мастера?') }}')"><svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg></button>
                                     @endif
                                 </div>
                             </form>

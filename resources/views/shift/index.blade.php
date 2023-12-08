@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', 'Сеансы')
+@section('title', 'Смена')
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Сеансы') }}</div>
+        <div class="card-header">{{ __('Смена') }}</div>
 
         <div class="card-body bg-light">
 
@@ -49,16 +49,16 @@
                         <tbody>
                         @forelse($seances as $seance)
                             <tr>
-                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.program.show', $seance->seance_id) }}">{{ date('H:i', $seance->open_time) }}</a><br/>(Основная программа)</td>
+                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.program.show', $seance->seance_id) }}">{{ date('H:i', $seance->open_time) }}</a><br/>({{ __('Основная программа') }})</td>
                                 <td colspan="2">
-                                    Программа "<a href="{{ route('dict.program.show', $seance->program->program_id) }}">{{ $seance->program->title }}</a>",
-                                    мастер <a href="{{ route('dict.master.show', $seance->master->id) }}">{{ $seance->master->name }}</a>
+                                    {{ __('Программа') }} "<a href="{{ route('dict.program.show', $seance->program->program_id) }}">{{ $seance->program->title }}</a>",
+                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $seance->master->id) }}">{{ $seance->master->name }}</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    Оплата {{ Helper::payType($seance->pay_type) }} {{ number_format($seance->total_price, 0, '.', ' ') }}р.,
-                                    программа {{ Helper::seanceStatus($seance->status) }}
+                                    {{ __('Оплата') }} {{ Helper::payType($seance->pay_type) }} {{ number_format($seance->total_price, 0, '.', ' ') }}{{ __('р.') }},
+                                    {{ __('программа') }} {{ Helper::seanceStatus($seance->status) }}
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post" action="{{ route('shift.program.destroy', $seance->seance_id) }}" class="admin-table__nomargin">
@@ -72,7 +72,7 @@
                                             <a title="Изменить" href="{{ route('shift.program.edit', $seance->seance_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg>
                                             </a>
-                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('Вы уверены, что хотите удалить сеанс?')">
+                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить сеанс?') }}')">
                                                 <svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg>
                                             </button>
                                         </div>
@@ -92,15 +92,15 @@
                         <tbody>
                         @forelse($services as $service)
                             <tr>
-                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.service.show', $service->record_id) }}">{{ date('H:i', $service->created_at) }}</a><br/>(Доп. Услуга)</td>
+                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.service.show', $service->record_id) }}">{{ date('H:i', $service->created_at) }}</a><br/>({{ __('Доп. Услуга') }})</td>
                                 <td colspan="2">
-                                    Услуга "<a href="{{ route('dict.service.show', $service->service->service_id) }}">{{ $service->service->title }}</a>" {{ $service->amount }} {{ Helper::num2word($service->amount, ['раз', 'раза', 'раз']) }},
-                                    мастер <a href="{{ route('dict.master.show', $service->master->id) }}">{{ $service->master->name }}</a>
+                                    {{ __('Услуга') }} "<a href="{{ route('dict.service.show', $service->service->service_id) }}">{{ $service->service->title }}</a>" {{ $service->amount }} {{ Helper::num2word($service->amount, [__('раз'), __('раза'), __('раз')]) }},
+                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $service->master->id) }}">{{ $service->master->name }}</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    Оплата {{ Helper::payType($service->pay_type) }} {{ number_format($service->service->price, 0, '.', ' ') }}р
+                                    {{ __('Оплата') }} {{ Helper::payType($service->pay_type) }} {{ number_format($service->service->price, 0, '.', ' ') }}р
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post"
@@ -116,7 +116,7 @@
                                             <a title="Изменить" href="{{ route('shift.service.edit', $service->service_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg>
                                             </a>
-                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('Вы уверены, что хотите удалить услугу?')">
+                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить услугу?') }}')">
                                                 <svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg>
                                             </button>
                                         </div>
@@ -135,14 +135,14 @@
                         <tbody>
                         @forelse($bar as $item)
                             <tr>
-                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.bar.show', $item->record_id) }}">{{ date('H:i', $item->created_at) }}</a><br/>(Напиток с бара)</td>
+                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.bar.show', $item->record_id) }}">{{ date('H:i', $item->created_at) }}</a><br/>({{ __('Напиток с бара') }})</td>
                                 <td colspan="2">
-                                    Напиток "<a href="{{ route('dict.bar.show', $item->bar->item_id) }}">{{ $item->bar->title }}</a>",
-                                    в объеме {{ $item->bar->portion }} {{ $item->amount }} {{ Helper::num2word($item->amount, ['раз', 'раза', 'раз']) }}
+                                    {{ __('Напиток') }} "<a href="{{ route('dict.bar.show', $item->bar->item_id) }}">{{ $item->bar->title }}</a>",
+                                    {{ __('в объеме') }} {{ $item->bar->portion }} {{ $item->amount }} {{ Helper::num2word($item->amount, [__('раз'), __('раза'), __('раз')]) }}
                                 </td>
                             </tr>
                             <tr>
-                                <td>Оплата {{ Helper::payType($item->pay_type) }} {{ number_format($item->total_price, 0, '.', ' ') }}р</td>
+                                <td>{{ __('Оплата') }} {{ Helper::payType($item->pay_type) }} {{ number_format($item->total_price, 0, '.', ' ') }}р</td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post" action="{{ route('shift.bar.destroy', $item->record_id) }}" class="admin-table__nomargin">
                                         @csrf
@@ -155,7 +155,7 @@
                                             <a title="Изменить" href="{{ route('shift.bar.edit', $item->item_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg>
                                             </a>
-                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('Вы уверены, что хотите удалить напиток?')">
+                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить напиток?') }}')">
                                                 <svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg>
                                             </button>
                                         </div>
@@ -189,15 +189,15 @@
                                         @method('POST')
 
                                         <div class="mb-3">
-                                            <input type="text" class="form-control" name="expenses" placeholder="Расходы"/>
+                                            <input type="text" class="form-control" name="expenses" placeholder="{{ __('Расходы') }}"/>
                                         </div>
                                         <div class="mb-3">
                                             <input type="text" class="form-control" name="stock" placeholder="{{ __('Остаток в кассе') }}"/>
                                         </div>
-                                        <textarea style="width: 100%; height: 120px" class="form-control mb-2" name="additional" placeholder="Заметки по смене"></textarea>
+                                        <textarea style="width: 100%; height: 120px" class="form-control mb-2" name="additional" placeholder="{{ __('Заметки по смене') }}"></textarea>
                                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                            <button title="Закрыть смену" type="submit" class="btn btn-danger me-1 rounded" onclick="return confirm('Вы уверены, что хотите закрыть смену?')">
-                                                Закрыть смену
+                                            <button title="Закрыть смену" type="submit" class="btn btn-danger me-1 rounded" onclick="return confirm('{{ __('Вы уверены, что хотите закрыть смену?') }}')">
+                                                {{ __('Закрыть смену') }}
                                             </button>
                                         </div>
                                     </form>
@@ -214,7 +214,7 @@
                             @method('POST')
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                <button type="submit" title="Delete" onclick="return confirm('{{ __('"Вы уверены, что хотите открыть новую смену?') }}')" class="btn btn-primary me-1 rounded">{{ __('Открыть смену') }}</button>
+                                <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите открыть новую смену?') }}')" class="btn btn-primary me-1 rounded">{{ __('Открыть смену') }}</button>
                             </div>
                         </form>
 

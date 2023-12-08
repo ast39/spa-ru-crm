@@ -1,17 +1,16 @@
 @php
-    use App\Http\Libs\Helper;
     use App\Http\Enums\ProgramType;
 @endphp
 
 @extends('layouts.app')
 
-@section('title', 'Обновление программы: ' . $program->title)
+@section('title', __('Обновление программы') . ' : ' . $program->title)
 
 @section('content')
     @include('components/tabs/price')
 
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Обновление программы "' . $program->title . '"') }}</div>
+        <div class="card-header">{{ __('Обновление программы' . ' : ' . $program->title) }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.program.update', $program->program_id) }}">
@@ -74,3 +73,4 @@
         </div>
     </div>
 @endsection
+
