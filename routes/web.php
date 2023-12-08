@@ -11,6 +11,7 @@ use App\Http\Controllers\Shift\ProgramController as ShiftProgram;
 use App\Http\Controllers\Shift\ServiceController as ShiftService;
 use App\Http\Controllers\Shift\BarController as ShiftBar;
 use App\Http\Controllers\Shift\ShiftController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\UserController;
 use App\Http\Services\DailyReport;
 use App\Http\Services\ShiftHelper;
@@ -173,6 +174,14 @@ Route::group(['middleware' => ['auth']], function() {
             Route::put('{id}', [ShiftBar::class, 'update'])->name('shift.bar.update');
             Route::delete('{id}', [ShiftBar::class, 'destroy'])->name('shift.bar.destroy');
         });
+    });
+
+    # Склад
+    Route::group(['prefix' => 'stock'], function () {
+        Route::get('', [StockController::class, 'index'])->name('stock.index');
+        Route::get('create', [StockController::class, 'create'])->name('stock.create');
+        Route::post('purchase', [StockController::class, 'store'])->name('stock.store');
+        Route::delete('{id}', [StockController::class, 'destroy'])->name('stock.destroy');
     });
 
 });

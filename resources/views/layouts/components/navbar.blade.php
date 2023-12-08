@@ -37,6 +37,9 @@
                         </li>
                     @endif
                 @else
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="{{ route('stock.index') }}">{{ __('Склад') }}</a>--}}
+{{--                    </li>--}}
                     <li class="nav-item">
                         @if(Gate::allows('owner'))
                             <a class="nav-link" href="{{ route('report.index') }}">{{ __('Отчеты') }}</a>
