@@ -13,7 +13,7 @@
             <div class="mmot-filterline__one" data-input_clear_content>
                 <select name="user" id="user" class="form-select form-control">
                     @foreach($users as $u)
-                        <option title="{{ $u->name }}" {{ (request()->user ?? $user->id ?? 0) == $u->id ? 'selected' : '' }} value="{{ $u->id }}">{{ $u->name }}</option>
+                        <option title="{{ $u->name }}" {{ (request()->user ?? null) == $u->id ? 'selected' : '' }} value="{{ $u->id }}">{{ $u->name }}</option>
                     @endforeach
                 </select>
             </div>

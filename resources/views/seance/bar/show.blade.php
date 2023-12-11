@@ -23,7 +23,7 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Стоимость') }}</th>
-                        <td class="text-end">{{ number_format($seance->bar->price, 2, '.', ' ') }}р.</td>
+                        <td class="text-end">{{ number_format($seance->bar->price, 2, '.', ' ') }}{{ __('р.') }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Кол-во') }}</th>
@@ -31,7 +31,7 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Общая стоимость') }}</th>
-                        <td class="text-end">{{ number_format($seance->bar->price * $seance->amount, 2, '.', ' ') }}р.</td>
+                        <td class="text-end">{{ number_format($seance->bar->price * $seance->amount, 2, '.', ' ') }}{{ __('р.') }}</td>
                     </tr>
 
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
@@ -42,7 +42,7 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Скидка') }} {{ $seance->sale > 0 ? $seance->sale . '%' : '' }}</th>
-                        <td class="text-end">{{ $seance->sale > 0 ? number_format($seance->sale_sum, 0, '.', ' ') . ' р.' : 'Без скидки'  }}</td>
+                        <td class="text-end">{{ $seance->sale > 0 ? number_format($seance->sale_sum, 0, '.', ' ') . __('р.') : __('Без скидки')  }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Форма оплаты') }}</th>
@@ -54,7 +54,7 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Итого с гостя') }}</th>
-                        <td class="text-end">{{ number_format($seance->total_price_with_sale, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->total_price_with_sale, 0, '.', ' ') }} {{ __('р.') }}</td>
                     </tr>
 
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
@@ -65,11 +65,11 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Заработок администратора') }}</th>
-                        <td class="text-end">{{ number_format($seance->admin_profit, 2, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->admin_profit, 2, '.', ' ') }} {{ __('р.') }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Заработок компании') }}</th>
-                        <td class="text-end">{{ number_format($seance->total_price_with_sale - $seance->admin_profit, 2, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->total_price_with_sale - $seance->admin_profit, 2, '.', ' ') }} {{ __('р.') }}</td>
                     </tr>
 
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
@@ -86,9 +86,9 @@
                 @method('DELETE')
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">К смене</a>
-                    <a href="{{ route('shift.bar.edit', $seance->record_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
-                    <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить продажу напитка?')" class="btn btn-danger me-1 rounded">Удалить</button>
+                    <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">{{ __('К смене') }}</a>
+                    <a href="{{ route('shift.bar.edit', $seance->record_id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
+                    <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить продажу напитка?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
                 </div>
             </form>
         </div>

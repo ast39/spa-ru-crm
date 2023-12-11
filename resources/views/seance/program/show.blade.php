@@ -5,7 +5,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Проданная программа ' . $seance->program->title)
+@section('title', 'Проданная программа' . ' : ' . $seance->program->title)
 
 @section('content')
     <div class="card bg-primary text-white">
@@ -151,10 +151,10 @@
                 @method('DELETE')
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">К смене</a>
-                    <a href="{{ route('shift.program.edit', $seance->seance_id) }}" class="btn btn-warning me-1 rounded">Изменить</a>
+                    <a href="{{ route('shift.index') }}" class="btn btn-secondary me-1 rounded">{{ __('К смене') }}</a>
+                    <a href="{{ route('shift.program.edit', $seance->seance_id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
                     @if(Gate::allows('owner'))
-                        <button type="submit" title="Delete" onclick="return confirm('Вы уверены, что хотите удалить продажу программы?')" class="btn btn-danger me-1 rounded">Удалить</button>
+                        <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить продажу программы?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
                     @endif
                 </div>
             </form>

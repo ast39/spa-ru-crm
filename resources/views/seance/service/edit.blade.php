@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', 'Продажа : Услуги')
+@section('title', __('Продажа') . ' : ' . __('Услуги'))
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Продажа : Услуги') }}</div>
+        <div class="card-header">{{ __('Продажа') . ' : ' . __('Услуги') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('shift.service.update', $seance->record_id) }}">

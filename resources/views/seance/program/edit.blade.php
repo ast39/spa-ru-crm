@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', 'Продажа : Программа')
+@section('title', __('Продажа') . ' : ' . __('Программа'))
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Продажа : Программа') }}</div>
+        <div class="card-header">{{ __('Продажа') . ' : ' . __('Программа') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('shift.program.update', $seance->seance_id) }}">
@@ -137,7 +137,7 @@
                     <label for="close_time" class="form-label">{{ __('Окончание программы') }}</label>
                     <div class="mmot-filterline__one mmot-inputwithico-left" data-input_clear_content>
                         <svg class="mmot-inputwithico-left__ico"><use xlink:href="#site-calendar"></use></svg>
-                        <input type="datetime-local" class="form-control" id="close_time" name="close_time" placeholder="Время окончания" onfocus="(this.showPicker())" data-input_clear value="{{ date('Y-m-d', $seance->close_time) }}T{{ date('H:i', $seance->close_time) }}" >
+                        <input type="datetime-local" class="form-control" id="close_time" name="close_time" placeholder="{{ __('Время окончания') }}" onfocus="(this.showPicker())" data-input_clear value="{{ date('Y-m-d', $seance->close_time) }}T{{ date('H:i', $seance->close_time) }}" >
                     </div>
                 </div>
 

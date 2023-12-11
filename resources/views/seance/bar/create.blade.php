@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', __('Продажа : Напитки'))
+@section('title', __('Продажа') . ' : ' . __('Напитки'))
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Продажа : Напитки') }}</div>
+        <div class="card-header">{{ __('Продажа') . ' : ' . __('Напитки') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('shift.bar.store') }}">

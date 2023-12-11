@@ -5,11 +5,11 @@
 
 @extends('layouts.app')
 
-@section('title', 'Продажа : Программа')
+@section('title', __('Продажа') . ' : ' . __('Программа'))
 
 @section('content')
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Продажа : Программа') }}</div>
+        <div class="card-header">{{ __('Продажа') . ' : ' . __('Программа') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('shift.program.store') }}">
@@ -141,7 +141,7 @@
                     <label for="open_time" class="form-label">{{ __('Начало программы') }}</label>
                     <div class="mmot-filterline__one mmot-inputwithico-left" data-input_clear_content>
                         <svg class="mmot-inputwithico-left__ico"><use xlink:href="#site-calendar"></use></svg>
-                        <input type="datetime-local" class="form-control" id="open_time" name="open_time" placeholder="Время начала" onfocus="(this.showPicker())" data-input_clear value="{{ old('open_time') }}" >
+                        <input type="datetime-local" class="form-control" id="open_time" name="open_time" placeholder="{{ __('Время начала') }}" onfocus="(this.showPicker())" data-input_clear value="{{ old('open_time') }}" >
                     </div>
                     @error('open_time')
                         <p class="text-danger mt-2">{{ $message }}</p>
@@ -152,7 +152,7 @@
                     <label for="close_time" class="form-label">{{ __('Окончание программы') }}</label>
                     <div class="mmot-filterline__one mmot-inputwithico-left" data-input_clear_content>
                         <svg class="mmot-inputwithico-left__ico"><use xlink:href="#site-calendar"></use></svg>
-                        <input type="datetime-local" class="form-control" id="close_time" name="close_time" placeholder="Время окончания" onfocus="(this.showPicker())" data-input_clear value="{{ old('close_time') }}" >
+                        <input type="datetime-local" class="form-control" id="close_time" name="close_time" placeholder="{{ __('Время окончания') }}" onfocus="(this.showPicker())" data-input_clear value="{{ old('close_time') }}" >
                     </div>
                     @error('close_time')
                         <p class="text-danger mt-2">{{ $message }}</p>
@@ -203,7 +203,7 @@
 
                 <div class="mb-3">
                     <label for="note" class="form-label">{{ __('Заметки') }}</label>
-                    <textarea  cols="10" rows="5" class="form-control" id="note" placeholder="Произвольные комментарии администратора" name="note">{{ old('note') }}</textarea>
+                    <textarea  cols="10" rows="5" class="form-control" id="note" placeholder="{{ __('Произвольные комментарии администратора') }}" name="note">{{ old('note') }}</textarea>
                     @error('note')
                         <p class="text-danger mt-2">{{ $message }}</p>
                     @enderror
