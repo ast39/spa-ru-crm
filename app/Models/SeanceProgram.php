@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\PayType;
 use App\Http\Enums\PercentType;
 use App\Http\Services\Helper;
 use App\Http\Services\ShiftHelper;
@@ -191,7 +192,9 @@ class SeanceProgram extends Model {
      */
     public function getTotalPriceWithSaleAttribute(): int
     {
-        return $this->total_price - $this->sale_sum;
+        return $this->status == 1
+            ? $this->total_price - $this->sale_sum
+            : 0;
     }
 
     /**
@@ -213,7 +216,9 @@ class SeanceProgram extends Model {
     {
         return $this->admin_id == $this->master_id
             ? 0
-            : Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100;
+            : ($this->pay_type == PayType::Cert->value
+                ? 0
+                : Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100);
     }
 
     /**
@@ -245,7 +250,11 @@ class SeanceProgram extends Model {
      */
     public function getMasterProfitAttribute(): int
     {
-        return Helper::masterPercent($this->master->roles, PercentType::Program->value) * $this->total_price / 100;
+        if ($this->status == 1) {
+            return Helper::masterPercent($this->master->roles, PercentType::Program->value) * $this->total_price / 100;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -265,7 +274,7 @@ class SeanceProgram extends Model {
     }
 
     /**
-     * Заработок руковолителя с программы
+     * Заработок руководителя с программы
      *
      * @return int
      */

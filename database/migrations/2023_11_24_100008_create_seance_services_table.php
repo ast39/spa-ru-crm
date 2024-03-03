@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Enums\PayType;
+use App\Http\Enums\SeanceStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -63,6 +64,10 @@ return new class extends Migration
                 ->nullable()
                 ->default(null)
                 ->comment('Заметки администратора');
+
+            $table->unsignedTinyInteger('status')
+                ->default(SeanceStatus::Completed->value)
+                ->comment('Статус услуги');
 
             $table->timestamps();
 

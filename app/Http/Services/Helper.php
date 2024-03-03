@@ -182,9 +182,23 @@ class Helper {
     {
         switch ($status) {
 
-            case 2  : return 'отменена';
+            case 2  : return 'отказ';
 
             default : return 'состоялась';
+        }
+    }
+
+    /**
+     * @param int $status
+     * @return string
+     */
+    public static function serviceStatus($status): string
+    {
+        switch ($status) {
+
+            case 2  : return 'отказ';
+
+            default : return 'оказана';
         }
     }
 
@@ -261,6 +275,7 @@ class Helper {
             case PayType::Cash->value  : return 'наличкой';
             case PayType::Card->value  : return 'картой';
             case PayType::Phone->value : return 'переводом';
+            case PayType::Cert->value : return 'сертификатом';
 
             default : return '???';
         }

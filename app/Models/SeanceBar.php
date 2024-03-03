@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\PayType;
 use App\Http\Enums\PercentType;
 use App\Http\Services\Helper;
 use App\Http\Services\ShiftHelper;use App\Http\Traits\Filterable;
@@ -85,11 +86,13 @@ class SeanceBar extends Model {
      */
     public function getAdminProfitAttribute(): int
     {
-        return Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100;
+        return $this->pay_type == PayType::Cert->value
+            ? 0
+            : Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100;
     }
 
     /**
-     * Заработок руковолителя с бара
+     * Заработок руководителя с бара
      *
      * @return int
      */

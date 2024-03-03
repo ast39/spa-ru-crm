@@ -49,7 +49,7 @@ class Report extends Model {
     ];
 
     protected $fillable = [
-        'report_id', 'shift_id', 'clients', 'cash_profit', 'card_profit', 'phone_profit',
+        'report_id', 'shift_id', 'clients', 'cash_profit', 'card_profit', 'phone_profit', 'cert_profit',
         'programs_profit', 'services_profit', 'bar_profit',
         'admin_profit', 'masters_profit', 'sale_sum', 'owner_profit',
         'expenses', 'stock', 'additional',

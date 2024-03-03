@@ -68,9 +68,9 @@ class ShiftController extends Controller {
     public function open(): RedirectResponse
     {
         Shift::query()->create([
-            'title' => Carbon::now()->format('Y-m-d'),
+            'title' => Carbon::now(+2)->format('Y-m-d'),
             'opened_admin_id' => Auth::id(),
-            'opened_time' => Carbon::now(),
+            'opened_time' => Carbon::now(+2),
             'status' => SoftStatus::Off->value,
         ]);
 
@@ -97,6 +97,7 @@ class ShiftController extends Controller {
         $data['cash_profit'] = $dl->cash();
         $data['card_profit'] = $dl->card();
         $data['phone_profit'] = $dl->phone();
+        $data['cert_profit'] = $dl->byCertificates();
         $data['programs_profit'] = $dl->programs();
         $data['services_profit'] = $dl->services();
         $data['bar_profit'] = $dl->bar();

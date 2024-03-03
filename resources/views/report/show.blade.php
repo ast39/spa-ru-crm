@@ -64,6 +64,10 @@
                     <th class="text-start">{{ __('Выручка переводами') }}</th>
                     <td class="text-end">{{ number_format($report->phone_profit, 0, '.', ' ') }} {{ __('р.') }}</td>
                 </tr>
+                <tr>
+                    <th class="text-start">{{ __('Оплачено сертификатами') }}</th>
+                    <td class="text-end">{{ number_format($report->cert_profit, 0, '.', ' ') }} {{ __('р.') }}</td>
+                </tr>
                 <tr><td colspan="2" class="bg-light text-center text-success"></td></tr>
                 <tr>
                     <th class="text-start">{{ __('Выручка смены') }}</th>
@@ -72,10 +76,13 @@
 
                 <tr><td colspan="2" class="bg-light text-center text-danger"><b>{{ __('Расходы') }}</b></td></tr>
 
-                <tr>
-                    <th class="text-start">{{ __('Администратор:') }} {{ $report->shift->openedAdmin->name }}</th>
-                    <td class="text-end">-{{ number_format($report->admin_profit, 0, '.', ' ') }} {{ __('р.') }}</td>
-                </tr>
+                @forelse($report->shift->admins_profits as $admin_id => $data)
+                    <tr>
+                        <th class="text-start">{{ __('Администратор:') }} {{ $data['name'] }}</th>
+                        <td class="text-end">-{{ number_format($data['profit'], 0, '.', ' ') }} {{ __('р.') }}</td>
+                    </tr>
+                @empty
+                @endforelse
 
                 @forelse($report->shift->masters_profits as $master_id => $data)
                     <tr>

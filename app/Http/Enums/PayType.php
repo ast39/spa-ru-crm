@@ -22,4 +22,9 @@ enum PayType: int {
      */
     case Phone  = 3;
 
+    /**
+     * Оплата сертификатом
+     */
+    case Cert  = 4;
+
 }

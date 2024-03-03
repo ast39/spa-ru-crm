@@ -76,12 +76,21 @@
                         <option title="Наличка" {{ $seance->pay_type == PayType::Cash->value ? 'selected' : '' }} value="{{ PayType::Cash->value }}">{{ Helper::payType(PayType::Cash->value) }}</option>
                         <option title="Карта" {{ $seance->pay_type == PayType::Card->value ? 'selected' : '' }} value="{{ PayType::Card->value }}">{{ Helper::payType(PayType::Card->value) }}</option>
                         <option title="Перевод" {{ $seance->pay_type == PayType::Phone->value ? 'selected' : '' }} value="{{ PayType::Phone->value }}">{{ Helper::payType(PayType::Phone->value) }}</option>
+                        <option title="Сертификат" {{ $seance->pay_type == PayType::Cert->value ? 'selected' : '' }} value="{{ PayType::Cert->value }}">{{ Helper::payType(PayType::Cert->value) }}</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="note" class="form-label">{{ __('Заметки') }}</label>
                     <textarea  cols="10" rows="5" class="form-control" id="note" name="note">{{ $seance->note }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label required">{{ __('Статус') }}</label>
+                    <select  class="form-control form-select" id="status" name="status">
+                        <option title="Состоялся" value="1" {{ $seance->status == 1 ? 'selected' : null }}>{{ __('Оказана') }}</option>
+                        <option title="Отмена" value="2" {{ $seance->status == 2 ? 'selected' : null }}>{{ __('Отказ') }}</option>
+                    </select>
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">

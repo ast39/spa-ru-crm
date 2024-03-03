@@ -6,6 +6,7 @@ use App\Http\Enums\PayType;
 use App\Models\SeanceBar;
 use App\Models\SeanceProgram;
 use App\Models\SeanceService;
+use App\Models\Shift;
 use Carbon\Carbon;
 
 /**
@@ -28,6 +29,9 @@ class DailyReport {
 
     # Смена
     protected string $shift;
+
+    # ID смены
+    protected $shift_id;
 
     # Список продаж программ
     protected array  $program_list = [];
@@ -85,7 +89,7 @@ class DailyReport {
             array_map(function($seance) {
                 return $seance['total_price'];
             },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Cash->value;
+                    return $e['pay_type'] == PayType::Cash->value && $e['status'] == 1;
                 })
             )
         );
@@ -94,7 +98,7 @@ class DailyReport {
             array_map(function($service) {
                 return $service['service']['price'];
             },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Cash->value;
+                    return $e['pay_type'] == PayType::Cash->value && $e['status'] == 1;
                 })
             )
         );
@@ -122,7 +126,7 @@ class DailyReport {
             array_map(function($seance) {
                 return $seance['total_price'];
             },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Card->value;
+                    return $e['pay_type'] == PayType::Card->value && $e['status'] == 1;
                 })
             )
         );
@@ -131,7 +135,7 @@ class DailyReport {
             array_map(function($service) {
                 return $service['service']['price'];
             },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Card->value;
+                    return $e['pay_type'] == PayType::Card->value && $e['status'] == 1;
                 })
             )
         );
@@ -159,7 +163,7 @@ class DailyReport {
             array_map(function($seance) {
                 return $seance['total_price'];
             },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Phone->value;
+                    return $e['pay_type'] == PayType::Phone->value && $e['status'] == 1;
                 })
             )
         );
@@ -168,7 +172,7 @@ class DailyReport {
             array_map(function($service) {
                 return $service['service']['price'];
             },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Phone->value;
+                    return $e['pay_type'] == PayType::Phone->value && $e['status'] == 1;
                 })
             )
         );
@@ -186,6 +190,43 @@ class DailyReport {
     }
 
     /**
+     * Оплачено сертификатом
+     *
+     * @return int
+     */
+    public function byCertificates(): int
+    {
+        $programs = array_sum(
+            array_map(function($seance) {
+                return $seance['total_price'];
+            },  array_filter($this->program_list, function($e) {
+                    return $e['pay_type'] == PayType::Cert->value && $e['status'] == 1;
+                })
+            )
+        );
+
+        $services = array_sum(
+            array_map(function($service) {
+                return $service['service']['price'];
+            },  array_filter($this->service_list, function($e) {
+                    return $e['pay_type'] == PayType::Cert->value && $e['status'] == 1;
+                })
+            )
+        );
+
+        $bar = array_sum(
+            array_map(function($item) {
+                return $item['total_price'];
+            },  array_filter($this->bar_list, function($e) {
+                    return $e['pay_type'] == PayType::Cert->value;
+                })
+            )
+        );
+
+        return $programs + $services + $bar;
+    }
+
+    /**
      * Выручка с программ
      *
      * @return int
@@ -195,7 +236,10 @@ class DailyReport {
         return array_sum(
             array_map(function($seance) {
                 return $seance['total_price'];
-            }, $this->program_list)
+            },  array_filter($this->program_list, function($e) {
+                    return $e['status'] == 1;
+                })
+            )
         );
     }
 
@@ -209,7 +253,10 @@ class DailyReport {
         return array_sum(
             array_map(function($service) {
                 return $service['service']['price'];
-            }, $this->service_list)
+            },  array_filter($this->service_list, function($e) {
+                    return $e['status'] ==1;
+                })
+            )
         );
     }
 
@@ -350,18 +397,21 @@ class DailyReport {
      */
     private function workDataParse(): void
     {
+        $shift_id = Shift::where('title', Carbon::parse($this->shift)->format('Y-m-d'))->first();
+        $this->shift_id = $shift_id->shift_id;
+
         $this->program_list = SeanceProgram::query()
-            ->whereBetween('open_time', [$this->shiftStart(), $this->shiftEnd()])
+            ->where('shift_id', $this->shift_id)
             ->get()
             ->toArray();
 
         $this->service_list = SeanceService::query()
-            ->whereBetween('created_at', [$this->shiftStart(), $this->shiftEnd()])
+            ->where('shift_id', $this->shift_id)
             ->get()
             ->toArray();
 
         $this->bar_list = SeanceBar::query()
-            ->whereBetween('created_at', [$this->shiftStart(), $this->shiftEnd()])
+            ->where('shift_id', $this->shift_id)
             ->get()
             ->toArray();
     }

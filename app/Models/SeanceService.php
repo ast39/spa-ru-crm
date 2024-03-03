@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\PayType;
 use App\Http\Enums\PercentType;
 use App\Http\Services\Helper;
 use App\Http\Services\ShiftHelper;
@@ -87,11 +88,13 @@ class SeanceService extends Model {
      */
     public function getTotalPriceWithSaleAttribute(): int
     {
-        return $this->total_price - $this->sale_sum;
+        return $this->status == 1
+            ? $this->total_price - $this->sale_sum
+            : 0;
     }
 
     /**
-     * Заработок администратора с бара
+     * Заработок администратора
      *
      * @return int
      */
@@ -99,21 +102,27 @@ class SeanceService extends Model {
     {
         return $this->admin_id == $this->master_id
             ? 0
-            : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->total_price / 100;
+            : ($this->pay_type == PayType::Cert->value
+                ? 0
+                : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->total_price / 100);
     }
 
     /**
-     * Заработок мастера с бара
+     * Заработок мастера
      *
      * @return int
      */
     public function getMasterProfitAttribute(): int
     {
-        return Helper::masterPercent($this->master->roles, PercentType::Service->value) * $this->total_price / 100;
+        if ($this->status == 1) {
+            return Helper::masterPercent($this->master->roles, PercentType::Service->value) * $this->total_price / 100;
+        } else {
+            return 0;
+        }
     }
 
     /**
-     * Заработок руковолителя с бара
+     * Заработок руководителя
      *
      * @return int
      */
@@ -157,7 +166,7 @@ class SeanceService extends Model {
 
     protected $fillable = [
         'record_id', 'shift_id', 'seance_id',  'admin_id', 'master_id', 'service_id', 'guest',
-        'amount', 'sale', 'gift', 'pay_type', 'note',
+        'amount', 'sale', 'gift', 'pay_type', 'note', 'status',
         'created_at', 'updated_at',
     ];
 

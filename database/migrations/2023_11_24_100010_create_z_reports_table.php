@@ -38,6 +38,11 @@ return new class extends Migration
                 ->default(0)
                 ->comment('Выручка переводом');
 
+            $table->unsignedFloat('cert_profit')
+                ->nullable()
+                ->default(0)
+                ->comment('Оплачено сертификатами');
+
             $table->unsignedFloat('programs_profit')
                 ->nullable()
                 ->default(0)

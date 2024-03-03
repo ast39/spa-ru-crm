@@ -237,3 +237,5 @@ td {
 td.cb {
     min-width: 50px !important;
 }
+
+.select{background: var(--color-text_21); border-radius: 0px; color: var(--color-text_3);}

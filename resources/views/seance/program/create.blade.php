@@ -184,9 +184,10 @@
                 <div class="mb-3">
                     <label for="pay_type" class="form-label required">{{ __('Форма оплаты') }}</label>
                     <select name="pay_type" id="pay_type" class="form-select form-control">
-                        <option title="Наличка" {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Cash->value ? 'selected' : '' }} value="{{ PayType::Cash->value }}">{{ Helper::payType(PayType::Cash->value) }}</option>
+                        <option title="Наличка" selected {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Cash->value ? 'selected' : '' }} value="{{ PayType::Cash->value }}">{{ Helper::payType(PayType::Cash->value) }}</option>
                         <option title="Карта" {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Card->value ? 'selected' : '' }} value="{{ PayType::Card->value }}">{{ Helper::payType(PayType::Card->value) }}</option>
                         <option title="Перевод" {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Phone->value ? 'selected' : '' }} value="{{ PayType::Phone->value }}">{{ Helper::payType(PayType::Phone->value) }}</option>
+                        <option title="Сертификат" {{ (request()->pay_type ?? PayType::Cert->value) == PayType::Cert->value ? 'selected' : '' }} value="{{ PayType::Cert->value }}">{{ Helper::payType(PayType::Cert->value) }}</option>
                     </select>
                     @error('pay_type')
                         <p class="text-danger mt-2">{{ $message }}</p>
@@ -212,8 +213,8 @@
                 <div class="mb-3">
                     <label for="status" class="form-label required">{{ __('Статус') }}</label>
                     <select  class="form-control form-select" id="status" name="status">
-                        <option title="Состоялся" value="1" {{ request()->status == 1 ? 'selected' : null }}>{{ __('Состоялся') }}</option>
-                        <option title="Отмена" value="2" {{ request()->status == 2 ? 'selected' : null }}>{{ __('Отказ') }}</option>
+                        <option title="Состоялась" value="1" {{ request()->status == 1 ? 'selected' : null }}>{{ __('Состоялась') }}</option>
+                        <option title="Отказ" value="2" {{ request()->status == 2 ? 'selected' : null }}>{{ __('Отказ') }}</option>
                     </select>
                     @error('level')
                         <p class="text-danger mt-2">{{ $message }}</p>

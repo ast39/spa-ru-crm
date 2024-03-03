@@ -30,6 +30,11 @@
                         <td class="text-end">{{ number_format($seance->service->price * $seance->amount, 2, '.', ' ') }} {{ __('р.') }}</td>
                     </tr>
 
+                    <tr>
+                        <th class="text-start">{{ __('Статус') }}</th>
+                        <td class="text-end">{{ Helper::serviceStatus($seance->status) }}</td>
+                    </tr>
+
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
 
                     <tr>

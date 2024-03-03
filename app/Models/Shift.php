@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Services\DailyReport;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Filterable;
 use Carbon\Carbon;
@@ -97,10 +96,7 @@ class Shift extends Model {
      */
     public function getServicesAttribute()
     {
-        return SeanceService::query()->whereBetween('created_at', [
-            Carbon::parse($this->title)->startOfDay()->addHours(ShiftHelper::SHIFT_CHANGE_HOUR),
-            Carbon::parse($this->title)->startOfDay()->addHours(ShiftHelper::SHIFT_CHANGE_HOUR)->addDay(),
-        ])
+        return SeanceService::query()->where('shift_id', $this->shift_id)
             ->get();
     }
 
@@ -111,35 +107,50 @@ class Shift extends Model {
      */
     public function getBarAttribute()
     {
-        return SeanceBar::query()->whereBetween('created_at', [
-            Carbon::parse($this->title)->startOfDay()->addHours(ShiftHelper::SHIFT_CHANGE_HOUR),
-            Carbon::parse($this->title)->startOfDay()->addHours(ShiftHelper::SHIFT_CHANGE_HOUR)->addDay(),
-        ])
+        return SeanceBar::query()->where('shift_id', $this->shift_id)
             ->get();
     }
 
     /**
-     * Детализация зарплаты администратора смены
+     * Детализация зарплаты администраторов в смене
      *
-     * @return int
+     * @return array
      */
-    public function getAdminProfitAttribute(): int
+    public function getAdminsProfitsAttribute(): array
     {
-        $profit = 0;
+        $profits = [];
 
         foreach ($this->programs as $program) {
-            $profit += $program->admin_profit;
+            if (!key_exists($program->admin_id, $profits)) {
+                $profits[$program->admin_id] = [
+                    'name' => $program->admin->name,
+                    'profit' => 0,
+                ];
+            }
+            $profits[$program->admin_id]['profit'] += $program->admin_profit;
         }
 
         foreach ($this->services as $service) {
-            $profit += $service->admin_profit;
+            if (!key_exists($service->admin_id, $profits)) {
+                $profits[$service->admin_id] = [
+                    'name' => $service->admin->name,
+                    'profit' => 0,
+                ];
+            }
+            $profits[$service->admin_id]['profit'] += $service->admin_profit;
         }
 
-        foreach ($this->bar as $item) {
-            $profit += $item->admin_profit;
+        foreach ($this->bar as $bar) {
+            if (!key_exists($bar->admin_id, $profits)) {
+                $profits[$bar->admin_id] = [
+                    'name' => $bar->admin->name,
+                    'profit' => 0,
+                ];
+            }
+            $profits[$bar->admin_id]['profit'] += $bar->admin_profit;
         }
 
-        return $profit;
+        return $profits;
     }
 
     /**
@@ -187,7 +198,7 @@ class Shift extends Model {
         'programs',
         'services',
         'bar',
-        'admin_profit',
+        'admins_profits',
         'masters_profits',
     ];
 

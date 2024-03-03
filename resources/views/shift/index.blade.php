@@ -58,7 +58,7 @@
                             <tr>
                                 <td>
                                     {{ __('Оплата') }} {{ Helper::payType($seance->pay_type) }} {{ number_format($seance->total_price, 0, '.', ' ') }}{{ __('р.') }},
-                                    {{ __('программа') }} {{ Helper::seanceStatus($seance->status) }}
+                                    {{ __('статус') }}: {{ Helper::seanceStatus($seance->status) }}
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post" action="{{ route('shift.program.destroy', $seance->seance_id) }}" class="admin-table__nomargin">
@@ -100,7 +100,8 @@
                             </tr>
                             <tr>
                                 <td>
-                                    {{ __('Оплата') }} {{ Helper::payType($service->pay_type) }} {{ number_format($service->service->price, 0, '.', ' ') }}р
+                                    {{ __('Оплата') }} {{ Helper::payType($service->pay_type) }} {{ number_format($service->service->price, 0, '.', ' ') }}{{ __('р.') }},
+                                    {{ __('статус') }}: {{ Helper::serviceStatus($service->status) }}
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post"

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Http\Enums\ProgramType;
-use App\Models\Admin;
 use App\Models\Program;
 use Illuminate\Database\Seeder;
 

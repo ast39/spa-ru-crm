@@ -29,13 +29,11 @@
 
                 @forelse($shifts as $shift)
                     @php
-                        $admin_profit = $shift->opened_admin_id != $user->id
-                            ? 0
-                            : $shift->admin_profit;
+                        $admin_profit = $shift->admins_profits[$user->id]['profit'] ?? 0;
                         $master_profit = $shift->masters_profits[$user->id]['profit'] ?? 0;
                     @endphp
 
-                    @if (is_null($master_profit) && $admin_profit == 0)
+                    @if ($master_profit == 0 && $admin_profit == 0)
                         @continue
                     @endif
 

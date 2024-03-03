@@ -43,7 +43,7 @@ class User extends Authenticatable {
 
 
     /**
-     * Роли пользрвателя
+     * Роли пользователя
      *
      * @return BelongsToMany
      */

@@ -33,6 +33,7 @@ class SeanceServiceUpdateRequest extends FormRequest
             'note' => ['nullable', 'string'],
             'amount' => ['nullable', 'integer'],
             'gift' => ['nullable', 'string'],
+            'status' => ['nullable', 'integer'],
         ];
     }
 }

@@ -86,9 +86,10 @@
                 <div class="mb-3">
                     <label for="pay_type" class="form-label required">{{ __('Форма оплаты') }}</label>
                     <select name="pay_type" id="pay_type" class="form-select form-control">
-                        <option {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Cash->value ? 'selected' : '' }} value="{{ PayType::Cash->value }}">{{ Helper::payType(PayType::Cash->value) }}</option>
+                        <option selected {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Cash->value ? 'selected' : '' }} value="{{ PayType::Cash->value }}">{{ Helper::payType(PayType::Cash->value) }}</option>
                         <option {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Card->value ? 'selected' : '' }} value="{{ PayType::Card->value }}">{{ Helper::payType(PayType::Card->value) }}</option>
                         <option {{ (request()->pay_type ?? PayType::Cash->value) == PayType::Phone->value ? 'selected' : '' }} value="{{ PayType::Phone->value }}">{{ Helper::payType(PayType::Phone->value) }}</option>
+                        <option {{ (request()->pay_type ?? PayType::Cert->value) == PayType::Cert->value ? 'selected' : '' }} value="{{ PayType::Cert->value }}">{{ Helper::payType(PayType::Cert->value) }}</option>
                     </select>
                     @error('pay_type')
                         <p class="text-danger mt-2">{{ $message }}</p>

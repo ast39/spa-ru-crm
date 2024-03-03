@@ -31,6 +31,7 @@ class SeanceServiceStoreRequest extends FormRequest
             'sale' => ['nullable', 'integer'],
             'pay_type' => ['nullable', new Enum(PayType::class)],
             'note' => ['nullable', 'string'],
+            'status' => ['nullable', 'integer'],
 
             'services' => ['nullable', 'array'],
             'services.*' => ['nullable', 'array'],

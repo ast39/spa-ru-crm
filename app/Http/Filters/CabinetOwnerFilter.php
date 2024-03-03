@@ -53,13 +53,15 @@ class CabinetOwnerFilter extends AbstractFilter {
      */
     public function user(Builder $builder, $value): void
     {
-        $builder->where("opened_admin_id", $value)
-            ->orWhereHas('shiftPrograms', function($q) use ($value) {
-                $q->where('seance_programs.master_id', $value);
-            })
-            ->orWhereHas('shiftServices', function($q) use ($value) {
-                $q->where('seance_services.master_id', $value);
-            });
+        $builder->where(function($q) use ($value) {
+            $q->where("opened_admin_id", $value)
+                ->orWhereHas('shiftPrograms', function($qs) use ($value) {
+                    $qs->where('seance_programs.master_id', $value);
+                })
+                ->orWhereHas('shiftServices', function($qs) use ($value) {
+                    $qs->where('seance_services.master_id', $value);
+                });
+        });
     }
 
 }
