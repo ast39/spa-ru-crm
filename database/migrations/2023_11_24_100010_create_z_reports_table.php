@@ -56,7 +56,7 @@ return new class extends Migration
             $table->unsignedFloat('bar_profit')
                 ->nullable()
                 ->default(0)
-                ->comment('Выручка с бара');
+                ->comment('Выручка с товаров');
 
             $table->unsignedFloat('admin_profit')
                 ->nullable()

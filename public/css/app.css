@@ -239,3 +239,100 @@ td.cb {
 }
 
 .select{background: var(--color-text_21); border-radius: 0px; color: var(--color-text_3);}
+
+body {
+    margin: 0;
+    padding-bottom: 60px; /* Отступ снизу для места под нижнюю панель */
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Высота панели */
+    background-color: #fff; /* Цвет фона панели */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Тень для панели */
+    display: flex;
+    justify-content: space-around; /* Равномерное распределение иконок */
+    align-items: center;
+    z-index: 1000; /* Обеспечивает, что панель будет сверху остальных элементов */
+}
+
+.bottom-nav a {
+    color: #333; /* Цвет иконок */
+    font-size: 24px; /* Размер иконок */
+    text-decoration: none;
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 767px) {
+    .top-nav {
+        display: none; /* Скрываем основное меню на мобильных устройствах */
+    }
+
+    .bottom-nav {
+        display: flex; /* Показываем нижнюю панель навигации на мобильных устройствах */
+    }
+}
+
+/* Стили для десктопов */
+@media (min-width: 1200px) {
+    .bottom-nav {
+        display: none; /* Скрываем нижнюю панель навигации на десктопах */
+    }
+
+    .top-nav {
+        display: flex; /* Показываем основное меню на десктопах */
+    }
+}
+
+
+/* CSS для медиазапросов */
+@media (max-width: 767.98px) {
+    .admin-table__adapt td {
+        display: block;
+        width: 100%;
+        text-align: right;
+        font-size: 0.8rem;
+        border: none;
+        padding: 0.25rem 0;
+    }
+
+    .admin-table__adapt td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+    .admin-table__adapt th {
+        display: none;
+    }
+
+    .admin-table__adapt tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+    }
+
+    .admin-table__adapt {
+        border: none;
+    }
+
+    .admin-table__adapt thead {
+        display: none;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .hide-mobile {
+        display: none;
+    }
+}

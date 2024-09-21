@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="percent_bar" class="form-label required">{{ __('Процент от бара') }}</label>
+                    <label for="percent_bar" class="form-label required">{{ __('Процент от товаров') }}</label>
                     <input type="text" class="form-control" id="percent_bar" name="percent_bar" value="{{ Helper::masterPercent($master->roles, PercentType::Bar->value) }}" />
                 </div>
 

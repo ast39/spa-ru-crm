@@ -154,7 +154,7 @@ class Shift extends Model {
     }
 
     /**
-     * Детализация зарплаты мсастеров в смене
+     * Детализация зарплаты мастеров в смене
      *
      * @return array
      */
@@ -170,6 +170,16 @@ class Shift extends Model {
                 ];
             }
             $profits[$program->master_id]['profit'] += $program->master_profit;
+
+            if (!is_null($program->cover_master_id)) {
+                if (!key_exists($program->cover_master_id, $profits)) {
+                    $profits[$program->cover_master_id] = [
+                        'name' => $program->cover_master->name,
+                        'profit' => 0,
+                    ];
+                }
+                $profits[$program->cover_master_id]['profit'] += $program->cover_master_profit;
+            }
         }
 
         foreach ($this->services as $service) {

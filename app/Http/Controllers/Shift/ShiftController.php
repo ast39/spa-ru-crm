@@ -7,6 +7,7 @@ use App\Http\Enums\SoftStatus;
 use App\Http\Requests\Seance\SeanceFilterRequest;
 use App\Http\Requests\Shift\ShiftCloseStoreRequest;
 use App\Http\Services\DailyReport;
+use App\Http\Services\PushTgService;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
 use App\Models\Report;
@@ -67,12 +68,14 @@ class ShiftController extends Controller {
      */
     public function open(): RedirectResponse
     {
-        Shift::query()->create([
+        $shift = Shift::create([
             'title' => Carbon::now(+2)->format('Y-m-d'),
             'opened_admin_id' => Auth::id(),
             'opened_time' => Carbon::now(+2),
             'status' => SoftStatus::Off->value,
         ]);
+
+        PushTgService::openShift($shift);
 
         return redirect()->route('shift.index');
     }
@@ -104,17 +107,20 @@ class ShiftController extends Controller {
         $data['admin_profit'] = $dl->adminProfit();
         $data['masters_profit'] = $dl->mastersProfit();
         $data['sale_sum'] = $dl->saleSum();
-        $data['owner_profit'] = $dl->ownerProfit();
+        $data['owner_profit'] = $dl->ownerProfit() - ($data['expenses'] ?? 0);
 
         try {
             DB::beginTransaction();
             $shift->update([
                 'closed_admin_id' => Auth::id(),
-                'closed_time' => Carbon::now(+2),
+                'closed_time' => Carbon::now(),
                 'status' => SoftStatus::On->value,
             ]);
-            $report_id = Report::query()->create($data)->report_id;
+            $report = Report::create($data);
+            $report_id = $report->report_id;
             DB::commit();
+
+            PushTgService::closeShift($report);
 
             return redirect()->route('report.show', $report_id);
 

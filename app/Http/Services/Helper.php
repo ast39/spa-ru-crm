@@ -264,21 +264,4 @@ class Helper {
         }
     }
 
-    /**
-     * @param int $type
-     * @return string
-     */
-    public static function payType(int $type): string
-    {
-        switch ($type) {
-
-            case PayType::Cash->value  : return 'наличкой';
-            case PayType::Card->value  : return 'картой';
-            case PayType::Phone->value : return 'переводом';
-            case PayType::Cert->value : return 'сертификатом';
-
-            default : return '???';
-        }
-    }
-
 }

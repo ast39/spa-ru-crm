@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Enums\PayType;
 use App\Http\Enums\PercentType;
 use App\Http\Services\Helper;
 use App\Http\Services\ShiftHelper;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class SeanceProgram extends Model {
 
@@ -30,7 +29,7 @@ class SeanceProgram extends Model {
 
 
     /**
-     * Мастер
+     * Администратор
      *
      * @return BelongsTo
      */
@@ -50,6 +49,16 @@ class SeanceProgram extends Model {
     }
 
     /**
+     * Второй мастер
+     *
+     * @return BelongsTo
+     */
+    public function cover_master(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cover_master_id', 'id');
+    }
+
+    /**
      * Программа
      *
      * @return BelongsTo
@@ -60,129 +69,13 @@ class SeanceProgram extends Model {
     }
 
     /**
-     * Доп. услуги к программе
-     *
-     * @return HasMany
-     */
-    public function services(): HasMany
-    {
-        return $this->hasMany(SeanceService::class, 'seance_id', 'seance_id');
-    }
-
-    /**
-     * Напитки к программе
-     *
-     * @return HasMany
-     */
-    public function bar(): HasMany
-    {
-        return $this->hasMany(SeanceBar::class, 'seance_id', 'seance_id');
-    }
-
-    /**
-     * Цена программы с учетом корректировки
+     * Фактическая цена программы до скидок
      *
      * @return int
      */
     public function getSeancePriceAttribute(): int
     {
-        return ($this->handle_price ?: 0) != 0
-            ?  $this->handle_price
-            : $this->program->price;
-    }
-
-    /**
-     * Сумма доп. услуг
-     *
-     * @return int
-     */
-    public function getServicesPriceAttribute(): int
-    {
-        return
-            array_sum(
-                array_map(function($e) {
-                    return $e['total_price'];
-                }, $this->services->toArray())
-            );
-    }
-
-    /**
-     * Сумма напитков
-     *
-     * @return int
-     */
-    public function getBarPriceAttribute(): int
-    {
-        return
-            array_sum(
-                array_map(function($e) {
-                    return $e['total_price'];
-                }, $this->bar->toArray())
-            );
-    }
-
-    /**
-     * Итоговый оборот с программы
-     *
-     * @return int
-     */
-    public function getTotalPriceAttribute(): int
-    {
-        return $this->seance_price;
-    }
-
-    /**
-     * Итоговый оборот с программы, услуг и бара
-     *
-     * @return int
-     */
-    public function getSeanceTotalPriceAttribute(): int
-    {
-        $services_price = array_sum(
-            array_map(function($e) {
-                return $e['total_price'];
-            }, $this->services->toArray())
-        );
-
-        $bar_price = array_sum(
-            array_map(function($e) {
-                return $e['total_price'];
-            }, $this->bar->toArray())
-        );
-
-        return $this->seance_price + $services_price + $bar_price;
-    }
-
-    /**
-     * Итоговая скидка с программы
-     *
-     * @return int
-     */
-    public function getSaleSumAttribute(): int
-    {
-        return (int) ($this->total_price * $this->sale / 100);
-    }
-
-    /**
-     * Итоговая скидка с программы, услуг и бара
-     *
-     * @return int
-     */
-    public function getSeanceSaleSumAttribute(): int
-    {
-        $services_sale = array_sum(
-            array_map(function($e) {
-                return $e['sale_sum'];
-            }, $this->services->toArray())
-        );
-
-        $bar_sale = array_sum(
-            array_map(function($e) {
-                return $e['sale_sum'];
-            }, $this->bar->toArray())
-        );
-
-        return $this->sale_sum + $services_sale + $bar_sale;
+        return $this->cash_payed + $this->card_payed + $this->phone_payed + $this->cert_payed + $this->sale_payed;
     }
 
     /**
@@ -190,21 +83,11 @@ class SeanceProgram extends Model {
      *
      * @return int
      */
-    public function getTotalPriceWithSaleAttribute(): int
+    public function getSeancePriceWithSaleAttribute(): int
     {
         return $this->status == 1
-            ? $this->total_price - $this->sale_sum
+            ? $this->seance_price - $this->sale_payed
             : 0;
-    }
-
-    /**
-     * Итого с клиента за программу, услуги и бар
-     *
-     * @return int
-     */
-    public function getSeanceTotalPriceWithSaleAttribute(): int
-    {
-        return $this->seance_total_price - $this->seance_sale_sum;
     }
 
     /**
@@ -214,63 +97,43 @@ class SeanceProgram extends Model {
      */
     public function getAdminProfitAttribute(): int
     {
-        return $this->admin_id == $this->master_id
+        return $this->admin_id == $this->master_id || $this->status != 1
             ? 0
-            : ($this->pay_type == PayType::Cert->value
-                ? 0
-                : Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100);
+            : ($this->admin_percent > 0
+                ? $this->admin_percent * $this->getSeancePriceAttribute() / 100
+                : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->getSeancePriceAttribute() / 100);
     }
 
     /**
-     * Заработок администратора с программы, услуг и бара
-     *
-     * @return int
-     */
-    public function getSeanceAdminProfitAttribute(): int
-    {
-        $seance_profit = array_sum(
-            array_map(function($e) {
-                return $e['admin_profit'];
-            }, $this->services->toArray())
-        );
-
-        $bar_profit = array_sum(
-            array_map(function($e) {
-                return $e['admin_profit'];
-            }, $this->bar->toArray())
-        );
-
-        return $this->admin_profit + $seance_profit + $bar_profit;
-    }
-
-    /**
-     * Заработок мастера с программы
+     * Заработок основного мастера с программы
      *
      * @return int
      */
     public function getMasterProfitAttribute(): int
     {
-        if ($this->status == 1) {
-            return Helper::masterPercent($this->master->roles, PercentType::Program->value) * $this->total_price / 100;
-        } else {
-            return 0;
-        }
+        return $this->status == 1
+            ? ($this->master_percent > 0
+                ? $this->master_percent * $this->getSeancePriceAttribute() / 100
+                : Helper::adminPercent($this->master->roles, PercentType::Service->value) * $this->getSeancePriceAttribute() / 100)
+            : 0;
     }
 
     /**
-     * Заработок мастера с программы, услуг и бара
+     * Заработок второго мастера с программы
      *
      * @return int
      */
-    public function getSeanceMasterProfitAttribute(): int
+    public function getCoverMasterProfitAttribute(): int
     {
-        $seance_profit = array_sum(
-            array_map(function($e) {
-                return $e['master_profit'];
-            }, $this->services->toArray())
-        );
+        if (is_null($this->cover_master_id)) {
+            return 0;
+        }
 
-        return $this->master_profit + $seance_profit;
+        return $this->status == 1
+            ? ($this->cover_master_percent > 0
+                ? $this->cover_master_percent * $this->getSeancePriceAttribute() / 100
+                : Helper::adminPercent($this->cover_master->roles, PercentType::Service->value) *$this->getSeancePriceAttribute() / 100)
+            : 0;
     }
 
     /**
@@ -280,29 +143,7 @@ class SeanceProgram extends Model {
      */
     public function getOwnerProfitAttribute(): int
     {
-        return $this->total_price_with_sale - $this->admin_profit - $this->master_profit;
-    }
-
-    /**
-     * Заработок руковолителя с программы, услуг и бара
-     *
-     * @return int
-     */
-    public function getSeanceOwnerProfitAttribute(): int
-    {
-        $seance_profit = array_sum(
-            array_map(function($e) {
-                return $e['owner_profit'];
-            }, $this->services->toArray())
-        );
-
-        $bar_profit = array_sum(
-            array_map(function($e) {
-                return $e['owner_profit'];
-            }, $this->bar->toArray())
-        );
-
-        return $this->owner_profit + $seance_profit + $bar_profit;
+        return $this->seance_price_with_sale - $this->admin_profit - $this->master_profit - $this->cover_master_profit;
     }
 
 
@@ -319,34 +160,24 @@ class SeanceProgram extends Model {
 
 
     protected $with = [
+
         'admin',
         'master',
         'program',
-        'services',
-        'bar',
     ];
 
     protected $appends = [
-        'seance_price',
-        'services_price',
-        'bar_price',
 
-        'total_price',
-        'sale_sum',
-        'total_price_with_sale',
+        'seance_price',
+        'seance_price_with_sale',
         'admin_profit',
         'master_profit',
+        'cover_master_profit',
         'owner_profit',
-
-        'seance_total_price',
-        'seance_sale_sum',
-        'seance_total_price_with_sale',
-        'seance_admin_profit',
-        'seance_master_profit',
-        'seance_owner_profit',
     ];
 
     protected $casts = [
+
         'open_time'  => 'timestamp',
         'close_time' => 'timestamp',
         'created_at' => 'timestamp',
@@ -354,8 +185,11 @@ class SeanceProgram extends Model {
     ];
 
     protected $fillable = [
-        'seance_id', 'shift_id', 'admin_id', 'master_id', 'program_id', 'guest', 'from',
-        'open_time', 'close_time', 'handle_price', 'sale', 'pay_type', 'note', 'status',
+
+        'seance_id', 'shift_id', 'admin_id', 'master_id', 'cover_master_id', 'program_id', 'guest', 'from',
+        'admin_percent', 'master_percent', 'cover_master_percent',
+        'open_time', 'close_time', 'note', 'status',
+        'cash_payed', 'card_payed', 'phone_payed', 'cert_payed', 'sale_payed', 'handle_price',
         'created_at', 'updated_at',
     ];
 

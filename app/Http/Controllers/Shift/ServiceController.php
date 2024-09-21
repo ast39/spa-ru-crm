@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Shift;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Seance\SeanceServiceStoreRequest;
 use App\Http\Requests\Seance\SeanceServiceUpdateRequest;
+use App\Http\Services\PushTgService;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
-use App\Models\SeanceProgram;
 use App\Models\SeanceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+
 
 class ServiceController extends Controller {
 
@@ -58,43 +59,24 @@ class ServiceController extends Controller {
         $data = $request->validated();
         $data['admin_id'] = Auth::id();
         $data['shift_id']  = ShiftHelper::currentShiftId();
-        $data['seance_id'] = null;
 
         try {
             DB::beginTransaction();
 
-            if (!is_null($data['services'] ?? null)) {
-                foreach ($data['services'] as $service_id => $service_order) {
-                    if ($service_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceService::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $data['seance_id'],
-                        'admin_id' => $data['admin_id'],
-                        'master_id' => $data['master_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'service_id' => $service_id,
-                        'amount' => $service_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($service_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
-                    ]);
-                }
-            }
+            $service = SeanceService::create($data);
+            $service_id = $service->record_id;
+            PushTgService::service(SeanceService::find($service->record_id));
 
             DB::commit();
 
-            return redirect()->route('shift.index');
+            return redirect()->route('shift.service.show', $service_id);
 
         } catch (\Exception $e) {
 
             DB::rollback();
             Log::error('SeanceController:store', ['message' => $e->getMessage()]);
 
-            return redirect()->back();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -126,10 +108,18 @@ class ServiceController extends Controller {
         $data = $request->validated();
         $data['gift'] = (int) !is_null($data['gift'] ?? null);
 
-        $seance_service = SeanceService::query()->findOrFail($id);
-        $seance_service->update($data);
+        try {
+            $seance_service = SeanceService::query()->findOrFail($id);
+            $seance_service->update($data);
 
-        return redirect()->route('shift.index');
+            return redirect()->route('shift.index');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('ServiceController:update', ['message' => $e->getMessage()]);
+
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     /**

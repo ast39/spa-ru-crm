@@ -18,7 +18,7 @@ enum PercentType: string {
     case Service   = 'percent_service';
 
     /**
-     * С бара
+     * С товаров
      */
     case Bar  = 'percent_bar';
 

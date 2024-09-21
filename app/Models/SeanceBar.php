@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Http\Enums\PayType;
 use App\Http\Enums\PercentType;
 use App\Http\Services\Helper;
 use App\Http\Services\ShiftHelper;use App\Http\Traits\Filterable;
 use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 class SeanceBar extends Model {
 
@@ -37,7 +37,7 @@ class SeanceBar extends Model {
     }
 
     /**
-     * Товар
+     * Напиток
      *
      * @return BelongsTo
      */
@@ -48,57 +48,45 @@ class SeanceBar extends Model {
 
 
     /**
-     * Итоговый оборот с бара
+     * Фактическая цена напитка до скидок
      *
      * @return int
      */
-    public function getTotalPriceAttribute(): int
+    public function getBarPriceAttribute(): int
     {
-        return (int) ($this->amount * $this->bar->price);
+        return $this->cash_payed + $this->card_payed + $this->phone_payed + $this->cert_payed + $this->sale_payed;
     }
 
     /**
-     * Итоговая скидка с бара
+     * Итого с клиента за напиток
      *
      * @return int
      */
-    public function getSaleSumAttribute(): int
+    public function getBarPriceWithSaleAttribute(): int
     {
-        return (int) ($this->gift > 0
-            ? $this->total_price
-            : $this->total_price * $this->sale / 100);
+        return $this->bar_price - $this->sale_payed;
     }
 
     /**
-     * Итого с клиента за бар
-     *
-     * @return int
-     */
-    public function getTotalPriceWithSaleAttribute(): int
-    {
-        return $this->total_price - $this->sale_sum;
-    }
-
-    /**
-     * Заработок администратора с бара
+     * Заработок администратора с напитка
      *
      * @return int
      */
     public function getAdminProfitAttribute(): int
     {
-        return $this->pay_type == PayType::Cert->value
-            ? 0
-            : Helper::adminPercent($this->admin->roles, PercentType::Program->value) * $this->total_price / 100;
+        return $this->admin_percent > 0
+            ? $this->admin_percent * $this->getBarPriceAttribute() / 100
+            : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->getBarPriceAttribute() / 100;
     }
 
     /**
-     * Заработок руководителя с бара
+     * Заработок руководителя с товаров
      *
      * @return int
      */
     public function getOwnerProfitAttribute(): int
     {
-        return $this->total_price_with_sale - $this->admin_profit;
+        return $this->bar_price_with_sale - $this->admin_profit;
     }
 
 
@@ -120,9 +108,8 @@ class SeanceBar extends Model {
     ];
 
     protected $appends = [
-        'total_price',
-        'sale_sum',
-        'total_price_with_sale',
+        'bar_price',
+        'bar_price_with_sale',
         'admin_profit',
         'owner_profit',
     ];
@@ -133,8 +120,9 @@ class SeanceBar extends Model {
     ];
 
     protected $fillable = [
-        'record_id', 'shift_id', 'seance_id', 'item_id', 'admin_id', 'guest',
-        'amount', 'sale', 'gift', 'pay_type', 'note',
+        'record_id', 'shift_id', 'item_id', 'admin_id', 'guest', 'note',
+        'admin_percent',
+        'cash_payed', 'card_payed', 'phone_payed', 'cert_payed', 'sale_payed', 'handle_price',
         'created_at', 'updated_at',
     ];
 

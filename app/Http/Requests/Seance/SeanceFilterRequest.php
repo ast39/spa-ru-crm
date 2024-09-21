@@ -24,13 +24,13 @@ class SeanceFilterRequest extends FormRequest
     {
         return [
 
-            'admin'   => ['nullable', 'integer'],
-            'master'  => ['nullable', 'integer'],
-            'program' => ['nullable', 'integer'],
-            'guest'   => ['nullable', 'string'],
-            'from'    => ['nullable', 'date_format:Y-m-d'],
-            'to'      => ['nullable', 'date_format:Y-m-d'],
-            'status'  => ['nullable', 'integer'],
+            'admin'   => ['nullable', 'sometimes', 'integer'],
+            'master'  => ['nullable', 'sometimes', 'integer'],
+            'program' => ['nullable', 'sometimes', 'integer'],
+            'guest'   => ['nullable', 'sometimes', 'string'],
+            'from'    => ['nullable', 'sometimes', 'date_format:Y-m-d'],
+            'to'      => ['nullable', 'sometimes', 'date_format:Y-m-d'],
+            'status'  => ['nullable', 'sometimes', 'integer'],
         ];
     }
 }

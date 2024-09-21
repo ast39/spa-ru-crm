@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Shift;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Seance\SeanceProgramStoreRequest;
 use App\Http\Requests\Seance\SeanceProgramUpdateRequest;
+use App\Http\Services\PushTgService;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
-use App\Models\SeanceBar;
 use App\Models\SeanceProgram;
-use App\Models\SeanceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+
 
 class ProgramController extends Controller {
 
@@ -65,50 +65,9 @@ class ProgramController extends Controller {
         try {
             DB::beginTransaction();
 
-            $seance_id = SeanceProgram::query()->create($data)->seance_id;
-
-            if (!is_null($data['services'] ?? null)) {
-                foreach ($data['services'] as $service_id => $service_order) {
-                    if ($service_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceService::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $seance_id,
-                        'admin_id' => $data['admin_id'],
-                        'master_id' => $data['master_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'service_id' => $service_id,
-                        'amount' => $service_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($service_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => '',
-                    ]);
-                }
-            }
-
-            if (!is_null($data['bar'] ?? null)) {
-                foreach ($data['bar'] as $item_id => $item_order) {
-                    if ($item_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceBar::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $seance_id,
-                        'admin_id' => $data['admin_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'item_id' => $item_id,
-                        'amount' => $item_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($item_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => '',
-                    ]);
-                }
-            }
+            $seance = SeanceProgram::create($data);
+            $seance_id = $seance->seance_id;
+            PushTgService::program($seance);
 
             DB::commit();
 
@@ -118,7 +77,7 @@ class ProgramController extends Controller {
             DB::rollback();
             Log::error('SeanceController:store', ['message' => $e->getMessage()]);
 
-            return redirect()->back();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -154,56 +113,7 @@ class ProgramController extends Controller {
         try {
             DB::beginTransaction();
 
-            SeanceService::where('seance_id', $seance->seance_id)->delete();
-
-            if (!is_null($data['services'] ?? null)) {
-                foreach ($data['services'] as $service_id => $service_order) {
-                    if ($service_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceService::query()->create([
-                        'shift_id' => $seance->shift_id,
-                        'seance_id' => $seance->seance_id,
-                        'admin_id' => $seance->admin_id,
-                        'master_id' => $data['master_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'service_id' => $service_id,
-                        'amount' => $service_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($service_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => '',
-                    ]);
-                }
-            }
-
-            SeanceBar::where('seance_id', $seance->seance_id)->delete();
-
-            if (!is_null($data['bar'] ?? null)) {
-                foreach ($data['bar'] as $item_id => $item_order) {
-                    if ($item_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceBar::query()->create([
-                        'shift_id' => $seance->shift_id,
-                        'seance_id' => $seance->seance_id,
-                        'admin_id' => $seance->admin_id,
-                        'guest' => $data['guest'] ?? '',
-                        'item_id' => $item_id,
-                        'amount' => $item_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($item_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => '',
-                    ]);
-                }
-            }
-
-            $seance->update(
-                collect($data)->forget(['services', 'bar'])->toArray(),
-            );
+            $seance->update($data);
 
             DB::commit();
 
@@ -211,9 +121,9 @@ class ProgramController extends Controller {
 
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('SeanceController:store', ['message' => $e->getMessage()]);
+            Log::error('SeanceController:update', ['message' => $e->getMessage()]);
 
-            return redirect()->back();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 

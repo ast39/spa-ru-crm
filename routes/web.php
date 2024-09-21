@@ -14,13 +14,25 @@ use App\Http\Controllers\Shift\ShiftController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\UserController;
 use App\Http\Services\DailyReport;
+use App\Http\Services\PushTgService;
 use App\Http\Services\ShiftHelper;
 use App\Models\Shift;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/push/test', function () {
+    dump(\App\Http\Services\ApiTg::getMe());
+    PushTgService::test();
+});
+
 Route::get('/', function () {
     return redirect('/cabinet');
+});
+
+Route::get('/offline', function () {
+
+    return view('modules/laravelpwa/offline');
+
 });
 
 Route::get('tst', function() {
@@ -125,7 +137,7 @@ Route::group(['middleware' => ['auth']], function() {
                 'destroy' => 'dict.service.destroy',
             ]);
 
-        # Бар
+        # Товары
         Route::resource('bar',BarController::class)
             ->names([
                 'index' => 'dict.bar.index',
@@ -165,7 +177,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::delete('{id}', [ShiftService::class, 'destroy'])->name('shift.service.destroy');
         });
 
-        # Бар смены
+        # Товары смены
         Route::group(['prefix' => 'bar'], function () {
             Route::get('create', [ShiftBar::class, 'create'])->name('shift.bar.create');
             Route::post('', [ShiftBar::class, 'store'])->name('shift.bar.store');
@@ -175,15 +187,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::delete('{id}', [ShiftBar::class, 'destroy'])->name('shift.bar.destroy');
         });
     });
-
-    # Склад
-    Route::group(['prefix' => 'stock'], function () {
-        Route::get('', [StockController::class, 'index'])->name('stock.index');
-        Route::get('create', [StockController::class, 'create'])->name('stock.create');
-        Route::post('purchase', [StockController::class, 'store'])->name('stock.store');
-        Route::delete('{id}', [StockController::class, 'destroy'])->name('stock.destroy');
-    });
-
 });
 
 Route::get('clear', [CabinetController::class, 'clear']);

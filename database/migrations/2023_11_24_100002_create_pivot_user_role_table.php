@@ -37,11 +37,11 @@ return new class extends Migration
             $table->unsignedBigInteger('percent_bar')
                 ->nullable()
                 ->default(0)
-                ->comment('Процент с бара');
+                ->comment('Процент с товаров');
 
             $table->unique(['user_id', 'role_id']);
 
-            $table->comment('Соотвествия ролей и пользователей');
+            $table->comment('Соответствия ролей и пользователей');
 
             $table->foreign('user_id', 'user_role_user_key')
                 ->references('id')

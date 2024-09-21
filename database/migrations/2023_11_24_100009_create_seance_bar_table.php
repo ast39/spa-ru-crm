@@ -54,6 +54,10 @@ return new class extends Migration
                 ->default(null)
                 ->comment('Имя гостя');
 
+            $table->unsignedDecimal('admin_percent')
+                ->default(0)
+                ->comment('Процент администратора');
+
             $table->text('note')
                 ->nullable()
                 ->default(null)
@@ -61,16 +65,26 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->comment('Позиции бара');
+            $table->comment('Позиции товаров');
 
-            $table->foreign('admin_id', 'bar_add_admin_key')
-                ->references('id')
-                ->on('users')
+            $table->foreign('shift_id', 'seance_bar_shift_key')
+                ->references('shift_id')
+                ->on('shifts')
                 ->onDelete('cascade');
 
-            $table->foreign('item_id', 'bar_add_bar_key')
+            $table->foreign('seance_id', 'seance_bar_seance_key')
+                ->references('seance_id')
+                ->on('seance_programs')
+                ->onDelete('cascade');
+
+            $table->foreign('item_id', 'seance_bar_bar_key')
                 ->references('item_id')
                 ->on('bar')
+                ->onDelete('cascade');
+
+            $table->foreign('admin_id', 'seance_bar_admin_key')
+                ->references('id')
+                ->on('users')
                 ->onDelete('cascade');
         });
 
@@ -82,8 +96,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('additional_items', function(Blueprint $table) {
-            $table->dropForeign('item_add_admin_key');
-            $table->dropForeign('item_add_item_key');
+            $table->dropForeign('seance_bar_shift_key');
+            $table->dropForeign('seance_bar_seance_key');
+            $table->dropForeign('seance_bar_bar_key');
+            $table->dropForeign('seance_bar_admin_key');
         });
 
         Schema::dropIfExists('additional_items');

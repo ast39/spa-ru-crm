@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Seance;
 
-use App\Http\Enums\PayType;
+use App\Http\Enums\PercentType;
+use App\Http\Services\Helper;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+
 
 class SeanceProgramUpdateRequest extends FormRequest
 {
@@ -17,6 +19,33 @@ class SeanceProgramUpdateRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation()
+    {
+        $cover_master = (int) ($this->cover_master_id ?? 0);
+        if ($cover_master <= 1) {
+            $this->merge([
+                'cover_master_id' => null,
+                'cover_master_percent' => 0,
+            ]);
+        } else {
+            $cover_master_percent = (int) ($this->cover_master_percent ?? 0);
+            if ($cover_master_percent <= 1) {
+                $this->merge(['cover_master_percent' => Helper::masterPercent(User::find($this->cover_master_id)->roles, PercentType::Program->value)]);
+            }
+        }
+
+        $admin_percent = (int) ($this->admin_percent ?? 0);
+
+        if ($admin_percent <= 1) {
+            $this->merge(['admin_percent' => Helper::adminPercent(User::find(auth()->id())->roles, PercentType::Program->value)]);
+        }
+
+        $master_percent = (int) ($this->master_percent ?? 0);
+        if ($master_percent <= 1) {
+            $this->merge(['master_percent' => Helper::masterPercent(User::find($this->master_id)->roles, PercentType::Program->value)]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,27 +55,27 @@ class SeanceProgramUpdateRequest extends FormRequest
     {
         return [
 
-            'master_id' => ['nullable', 'integer'],
+            'master_id' => ['nullable', 'sometimes', 'integer'],
+            'cover_master_id' => ['nullable', 'sometimes', 'integer'],
+            'admin_percent' => ['nullable', 'sometimes', 'numeric'],
+            'master_percent' => ['nullable', 'sometimes', 'numeric'],
+            'cover_master_percent' => ['nullable', 'sometimes', 'numeric'],
+
             'program_id' => ['nullable', 'integer'],
-            'guest' => ['nullable', 'string'],
-            'open_time' => ['nullable', 'string'],
-            'close_time' => ['nullable', 'string'],
+            'guest' => ['nullable', 'sometimes', 'string'],
+            'open_time' => ['nullable', 'sometimes', 'string'],
+            'close_time' => ['nullable', 'sometimes', 'string'],
+
+            'cash_payed' => ['nullable', 'integer'],
+            'card_payed' => ['nullable', 'integer'],
+            'phone_payed' => ['nullable', 'integer'],
+            'cert_payed' => ['nullable', 'integer'],
+            'sale_payed' => ['nullable', 'integer'],
             'handle_price' => ['nullable', 'integer'],
-            'sale' => ['nullable', 'integer'],
-            'pay_type' => ['nullable', new Enum(PayType::class)],
-            'from' => ['nullable', 'string'],
-            'note' => ['nullable', 'string'],
-            'status' => ['nullable', 'integer'],
 
-            'services' => ['nullable', 'array'],
-            'services.*' => ['nullable', 'array'],
-            'services.*.amount' => ['nullable', 'integer'],
-            'services.*.gift' => ['nullable', 'string'],
-
-            'bar' => ['nullable', 'array'],
-            'bar.*' => ['nullable', 'array'],
-            'bar.*.amount' => ['nullable', 'integer'],
-            'bar.*.gift' => ['nullable', 'string'],
+            'from' => ['nullable', 'sometimes', 'string'],
+            'note' => ['nullable', 'sometimes', 'string'],
+            'status' => ['nullable', 'sometimes', 'integer'],
         ];
     }
 }

@@ -18,7 +18,7 @@ use Carbon\Carbon;
  * @phone() : Выручка переводами
  * @programs() : Выручка с программ
  * @services() : Выручка с услуг
- * @bar() : Выручка с бара
+ * @bar() : Выручка с товаров
  * @adminProfit() : Зарплата администратору
  * @mastersProfit() : Зарплата мастерам
  * @ownerProfit() : Прибыль предприятия
@@ -39,7 +39,7 @@ class DailyReport {
     # Список продаж сервисов
     protected array  $service_list = [];
 
-    # Список продаж с бара
+    # Список продаж товаров
     protected array  $bar_list = [];
 
 
@@ -87,29 +87,20 @@ class DailyReport {
     {
         $programs = array_sum(
             array_map(function($seance) {
-                return $seance['total_price'];
-            },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Cash->value && $e['status'] == 1;
-                })
-            )
+                return $seance['cash_payed'];
+            }, $this->program_list)
         );
 
         $services = array_sum(
             array_map(function($service) {
-                return $service['service']['price'];
-            },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Cash->value && $e['status'] == 1;
-                })
-            )
+                return $service['cash_payed'];
+            }, $this->service_list)
         );
 
         $bar = array_sum(
             array_map(function($item) {
-                return $item['total_price'];
-            },  array_filter($this->bar_list, function($e) {
-                    return $e['pay_type'] == PayType::Cash->value;
-                })
-            )
+                return $item['cash_payed'];
+            }, $this->bar_list)
         );
 
         return $programs + $services + $bar;
@@ -124,29 +115,20 @@ class DailyReport {
     {
         $programs = array_sum(
             array_map(function($seance) {
-                return $seance['total_price'];
-            },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Card->value && $e['status'] == 1;
-                })
-            )
+                return $seance['card_payed'];
+            }, $this->program_list)
         );
 
         $services = array_sum(
             array_map(function($service) {
-                return $service['service']['price'];
-            },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Card->value && $e['status'] == 1;
-                })
-            )
+                return $service['card_payed'];
+            }, $this->service_list)
         );
 
         $bar = array_sum(
             array_map(function($item) {
-                return $item['total_price'];
-            },  array_filter($this->bar_list, function($e) {
-                    return $e['pay_type'] == PayType::Card->value;
-                })
-            )
+                return $item['card_payed'];
+            }, $this->bar_list)
         );
 
         return $programs + $services + $bar;
@@ -161,29 +143,20 @@ class DailyReport {
     {
         $programs = array_sum(
             array_map(function($seance) {
-                return $seance['total_price'];
-            },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Phone->value && $e['status'] == 1;
-                })
-            )
+                return $seance['phone_payed'];
+            }, $this->program_list)
         );
 
         $services = array_sum(
             array_map(function($service) {
-                return $service['service']['price'];
-            },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Phone->value && $e['status'] == 1;
-                })
-            )
+                return $service['phone_payed'];
+            }, $this->service_list)
         );
 
         $bar = array_sum(
             array_map(function($item) {
-                return $item['total_price'];
-            },  array_filter($this->bar_list, function($e) {
-                    return $e['pay_type'] == PayType::Phone->value;
-                })
-            )
+                return $item['phone_payed'];
+            }, $this->bar_list)
         );
 
         return $programs + $services + $bar;
@@ -198,29 +171,20 @@ class DailyReport {
     {
         $programs = array_sum(
             array_map(function($seance) {
-                return $seance['total_price'];
-            },  array_filter($this->program_list, function($e) {
-                    return $e['pay_type'] == PayType::Cert->value && $e['status'] == 1;
-                })
-            )
+                return $seance['cert_payed'];
+            }, $this->program_list)
         );
 
         $services = array_sum(
             array_map(function($service) {
-                return $service['service']['price'];
-            },  array_filter($this->service_list, function($e) {
-                    return $e['pay_type'] == PayType::Cert->value && $e['status'] == 1;
-                })
-            )
+                return $service['cert_payed'];
+            }, $this->service_list)
         );
 
         $bar = array_sum(
             array_map(function($item) {
-                return $item['total_price'];
-            },  array_filter($this->bar_list, function($e) {
-                    return $e['pay_type'] == PayType::Cert->value;
-                })
-            )
+                return $item['cert_payed'];
+            }, $this->bar_list)
         );
 
         return $programs + $services + $bar;
@@ -235,7 +199,7 @@ class DailyReport {
     {
         return array_sum(
             array_map(function($seance) {
-                return $seance['total_price'];
+                return $seance['seance_price_with_sale'];
             },  array_filter($this->program_list, function($e) {
                     return $e['status'] == 1;
                 })
@@ -252,16 +216,16 @@ class DailyReport {
     {
         return array_sum(
             array_map(function($service) {
-                return $service['service']['price'];
+                return $service['service_price_with_sale'];
             },  array_filter($this->service_list, function($e) {
-                    return $e['status'] ==1;
+                    return $e['status'] == 1;
                 })
             )
         );
     }
 
     /**
-     * Выручка с бара
+     * Выручка с товаров
      *
      * @return int
      */
@@ -269,7 +233,7 @@ class DailyReport {
     {
         return array_sum(
             array_map(function($item) {
-                return $item['total_price'];
+                return $item['bar_price_with_sale'];
             }, $this->bar_list)
         );
     }
@@ -361,19 +325,19 @@ class DailyReport {
     {
         $programs = array_sum(
             array_map(function($seance) {
-                return $seance['sale_sum'];
+                return $seance['sale_payed'];
             }, $this->program_list)
         );
 
         $services = array_sum(
             array_map(function($service) {
-                return $service['sale_sum'];
+                return $service['sale_payed'];
             }, $this->service_list)
         );
 
         $bar = array_sum(
             array_map(function($item) {
-                return $item['sale_sum'];
+                return $item['sale_payed'];
             }, $this->bar_list)
         );
 

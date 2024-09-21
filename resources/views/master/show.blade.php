@@ -27,7 +27,7 @@
                         <td class="text-end">{{ number_format(Helper::masterPercent($master->roles, PercentType::Service->value), 2, '.', ' ') }}%</td>
                     </tr>
                     <tr>
-                        <th class="text-start">{{ __('Процент от бара') }}</th>
+                        <th class="text-start">{{ __('Процент от товаров') }}</th>
                         <td class="text-end">{{ number_format(Helper::masterPercent($master->roles, PercentType::Bar->value), 2, '.', ' ') }}%</td>
                     </tr>
                     <tr>

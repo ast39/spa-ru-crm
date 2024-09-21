@@ -28,11 +28,11 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Стоимость по прайсу') }}</th>
-                        <td class="text-end">{{ number_format($seance->program->price, 2, '.', ' ') }}р.</td>
+                        <td class="text-end">{{ number_format($seance->program->price, 0, '.', ' ') }} р.</td>
                     </tr>
                     <tr>
-                        <th class="text-start">{{ __('Корректировка стоимости') }}</th>
-                        <td class="text-end">{{ is_null($seance->handle_price) ? ' - ' : number_format($seance->handle_price, 2, '.', ' ') . ' р.' }}</td>
+                        <th class="text-start">{{ __('Фактическая стоимость') }}</th>
+                        <td class="text-end">{{ number_format($seance->seance_price, 0, '.', ' ') . ' р.' }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Статус') }}</th>
@@ -46,20 +46,32 @@
                         <td class="text-end">{{ empty($seance->guest) ? 'Гость' : $seance->guest }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">{{ __('Скидка') }} {{ $seance->sale > 0 ? $seance->sale . '%' : '' }}</th>
-                        <td class="text-end">{{ $seance->sale > 0 ? number_format($seance->sale_sum, 0, '.', ' ') . ' р.' : 'Без скидки'  }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-start">{{ __('Форма оплаты') }}</th>
-                        <td class="text-end">{{ Helper::payType($seance->pay_type) }}</td>
+                        <th class="text-start">{{ __('Скидка') }}</th>
+                        <td class="text-end">{{ $seance->sale_payed > 0 ? number_format($seance->sale_payed, 0, '.', ' ') . ' р.' : 'Без скидки'  }}</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Откуда узнали') }}</th>
                         <td class="text-end">{{ empty($seance->from) ? ' - ' : $seance->from }}</td>
                     </tr>
                     <tr>
+                        <th class="text-start">{{ __('Оплата наличкой') }}</th>
+                        <td class="text-end">{{ number_format($seance->cash_payed, 0, '.', ' ') }} р.</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">{{ __('Оплата картой') }}</th>
+                        <td class="text-end">{{ number_format($seance->card_payed, 0, '.', ' ') }} р.</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">{{ __('Оплата переводом') }}</th>
+                        <td class="text-end">{{ number_format($seance->phone_payed, 0, '.', ' ') }} р.</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">{{ __('Оплата сертификатом') }}</th>
+                        <td class="text-end">{{ number_format($seance->cert_payed, 0, '.', ' ') }} р.</td>
+                    </tr>
+                    <tr>
                         <th class="text-start">{{ __('Итого с гостя') }}</th>
-                        <td class="text-end">{{ number_format($seance->total_price_with_sale, 0, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->seance_price_with_sale, 0, '.', ' ') }} р.</td>
                     </tr>
 
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
@@ -70,19 +82,27 @@
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Заработок администратора') }}</th>
-                        <td class="text-end">{{ number_format($seance->admin_profit, 2, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->admin_profit, 0, '.', ' ') }} р. ({{ $seance->admin_percent > 0 ? number_format($seance->admin_percent) . '%' : '-' }})</td>
                     </tr>
                     <tr>
-                        <th class="text-start">{{ __('Мастер') }}</th>
+                        <th class="text-start">{{ __('Основной мастер') }}</th>
                         <td class="text-end">{{ $seance->master->name }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">{{ __('Заработок мастера') }}</th>
-                        <td class="text-end">{{ number_format($seance->master_profit, 2, '.', ' ') }} р.</td>
+                        <th class="text-start">{{ __('Заработок основного мастера') }}</th>
+                        <td class="text-end">{{ number_format($seance->master_profit, 0, '.', ' ') }} р. ({{ $seance->master_percent > 0 ? number_format($seance->master_percent) . '%' : '-' }})</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">{{ __('Второй мастер') }}</th>
+                        <td class="text-end">{{ $seance->cover_master->name ?? 'Не предусмотрен' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">{{ __('Заработок второго мастера') }}</th>
+                        <td class="text-end">{{ number_format($seance->cover_master_profit, 0, '.', ' ') }} р. ({{ $seance->cover_master_percent > 0 ? number_format($seance->cover_master_percent) . '%' : '-' }})</td>
                     </tr>
                     <tr>
                         <th class="text-start">{{ __('Заработок компании') }}</th>
-                        <td class="text-end">{{ number_format($seance->total_price_with_sale - $seance->admin_profit - $seance->master_profit, 2, '.', ' ') }} р.</td>
+                        <td class="text-end">{{ number_format($seance->owner_profit, 0, '.', ' ') }} р.</td>
                     </tr>
 
                     <tr><td colspan="2" class="bg-light">&nbsp</td></tr>
@@ -93,58 +113,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            <div class="accordion mb-3">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button bg-light text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            {{ __('Дополнительные услуги') }}
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <table class="table table-bordered">
-                                <tbody>
-                                @forelse($seance->services as $service)
-                                    <tr>
-                                        <td class="text-end" style="width: 60px">{{ $loop->iteration }}</td>
-                                        <td class="text-start"><a href="{{ route('shift.service.show', $service->record_id) }}" target="_blank">{{ $service->service->title }}</a></td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="2" class="text-start">{{ __('Дополнительно ничего не приобреталось') }}</td></tr>
-                                @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>>
-            </div>
-
-            <div class="accordion mb-3">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button bg-light text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                            {{ __('Напитки в баре') }}
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <table class="table table-bordered">
-                                <tbody>
-                                @forelse($seance->bar as $item)
-                                    <tr>
-                                        <td class="text-end" style="width: 60px">{{ $loop->iteration }}</td>
-                                        <td class="text-start"><a href="{{ route('shift.bar.show', $item->record_id) }}" target="_blank">{{ $item->bar->title }} ({{ $item->bar->portion }})</a></td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="2" class="text-start">{{ __('Дополнительно ничего не приобреталось') }}</td></tr>
-                                @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>>
-            </div>
 
             <form method="post" action="{{ route('shift.program.destroy', $seance->seance_id) }}">
                 @csrf
@@ -159,5 +127,7 @@
                 </div>
             </form>
         </div>
+
+        <div class="card-footer bg-light border-0"></div>
     </div>
 @endsection

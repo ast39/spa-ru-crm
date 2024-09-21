@@ -26,7 +26,7 @@
                     <th class="text-start">{{ __('Имя') }}</th>
                     <th class="text-center">{{ __('С программ') }}</th>
                     <th class="text-center">{{ __('С услуг') }}</th>
-                    <th class="text-center">{{ __('С бара') }}</th>
+                    <th class="text-center">{{ __('С товаров') }}</th>
                     <th class="text-end">{{ __('UD') }}</th>
                 </tr>
                 </thead>

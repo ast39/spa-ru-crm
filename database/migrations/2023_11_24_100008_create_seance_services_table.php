@@ -37,6 +37,11 @@ return new class extends Migration
                 ->default(null)
                 ->comment('ID администратора');
 
+            $table->unsignedBigInteger('cover_master_id')
+                ->nullable()
+                ->default(null)
+                ->comment('ID второго мастера');
+
             $table->unsignedFloat('amount')
                 ->default(1)
                 ->comment('Количество');
@@ -60,6 +65,18 @@ return new class extends Migration
                 ->default(null)
                 ->comment('Имя гостя');
 
+            $table->unsignedDecimal('admin_percent')
+                ->default(0)
+                ->comment('Процент администратора');
+
+            $table->unsignedDecimal('master_percent')
+                ->default(0)
+                ->comment('Процент основного мастера');
+
+            $table->unsignedDecimal('cover_master_percent')
+                ->default(0)
+                ->comment('Процент второго мастера');
+
             $table->text('note')
                 ->nullable()
                 ->default(null)
@@ -73,6 +90,21 @@ return new class extends Migration
 
             $table->comment('Доп. услуги');
 
+            $table->foreign('shift_id', 'seance_service_shift_key')
+                ->references('shift_id')
+                ->on('shifts')
+                ->onDelete('cascade');
+
+            $table->foreign('seance_id', 'seance_service_seance_key')
+                ->references('seance_id')
+                ->on('seance_programs')
+                ->onDelete('cascade');
+
+            $table->foreign('service_id', 'seance_service_service_key')
+                ->references('service_id')
+                ->on('services')
+                ->onDelete('cascade');
+
             $table->foreign('admin_id', 'service_add_admin_key')
                 ->references('id')
                 ->on('users')
@@ -83,9 +115,9 @@ return new class extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('service_id', 'service_add_service_key')
-                ->references('service_id')
-                ->on('services')
+            $table->foreign('master_id', 'seance_service_cover_master_key')
+                ->references('id')
+                ->on('users')
                 ->onDelete('cascade');
         });
 
@@ -97,8 +129,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('seance_services', function(Blueprint $table) {
-            $table->dropForeign('item_add_admin_key');
-            $table->dropForeign('item_add_item_key');
+            $table->dropForeign('seance_service_shift_key');
+            $table->dropForeign('seance_service_seance_key');
+            $table->dropForeign('seance_service_service_key');
+            $table->dropForeign('seance_service_admin_key');
+            $table->dropForeign('seance_service_master_key');
+            $table->dropForeign('seance_service_cover_master_key');
         });
 
         Schema::dropIfExists('additional_items');

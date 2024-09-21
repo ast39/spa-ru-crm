@@ -52,13 +52,18 @@
                                 <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.program.show', $seance->seance_id) }}">{{ date('H:i', $seance->open_time) }}</a><br/>({{ __('Основная программа') }})</td>
                                 <td colspan="2">
                                     {{ __('Программа') }} "<a href="{{ route('dict.program.show', $seance->program->program_id) }}">{{ $seance->program->title }}</a>",
-                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $seance->master->id) }}">{{ $seance->master->name }}</a>
+                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $seance->master->id) }}">{{ $seance->master->name }}</a>,
+                                    {{ __('статус') }}: {{ Helper::seanceStatus($seance->status) }}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    {{ __('Оплата') }} {{ Helper::payType($seance->pay_type) }} {{ number_format($seance->total_price, 0, '.', ' ') }}{{ __('р.') }},
-                                    {{ __('статус') }}: {{ Helper::seanceStatus($seance->status) }}
+                                    {{ __('Оплата') }}
+                                    {{ number_format($seance->seance_price_with_sale, 0, '.', ' ') }}{{ __('р.') }} [
+                                    Нал: {{ number_format($seance->cash_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Карта: {{ number_format($seance->card_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Перевод: {{ number_format($seance->phone_payed, 0, '.', ' ') }}{{ __('р.') }}
+                                    ]
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post" action="{{ route('shift.program.destroy', $seance->seance_id) }}" class="admin-table__nomargin">
@@ -94,14 +99,19 @@
                             <tr>
                                 <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.service.show', $service->record_id) }}">{{ date('H:i', $service->created_at) }}</a><br/>({{ __('Доп. Услуга') }})</td>
                                 <td colspan="2">
-                                    {{ __('Услуга') }} "<a href="{{ route('dict.service.show', $service->service->service_id) }}">{{ $service->service->title }}</a>" {{ $service->amount }} {{ Helper::num2word($service->amount, [__('раз'), __('раза'), __('раз')]) }},
-                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $service->master->id) }}">{{ $service->master->name }}</a>
+                                    {{ __('Услуга') }} "<a href="{{ route('dict.service.show', $service->service->service_id) }}">{{ $service->service->title }}</a>",
+                                    {{ __('мастер') }} <a href="{{ route('dict.master.show', $service->master->id) }}">{{ $service->master->name }}</a>,
+                                    {{ __('статус') }}: {{ Helper::serviceStatus($service->status) }}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    {{ __('Оплата') }} {{ Helper::payType($service->pay_type) }} {{ number_format($service->service->price, 0, '.', ' ') }}{{ __('р.') }},
-                                    {{ __('статус') }}: {{ Helper::serviceStatus($service->status) }}
+                                    {{ __('Оплата') }}
+                                    {{ number_format($service->service_price_with_sale, 0, '.', ' ') }}{{ __('р.') }} [
+                                    Нал: {{ number_format($service->cash_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Карта: {{ number_format($service->card_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Перевод: {{ number_format($service->phone_payed, 0, '.', ' ') }}{{ __('р.') }}
+                                    ]
                                 </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post"
@@ -111,10 +121,10 @@
                                         @method('DELETE')
 
                                         <div class="mmot-table__action">
-                                            <a title="Показать" href="{{ route('shift.service.show', $service->service_id) }}" class="mmot-table__action__one">
+                                            <a title="Показать" href="{{ route('shift.service.show', $service->record_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-view"></use></svg>
                                             </a>
-                                            <a title="Изменить" href="{{ route('shift.service.edit', $service->service_id) }}" class="mmot-table__action__one">
+                                            <a title="Изменить" href="{{ route('shift.service.edit', $service->record_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg>
                                             </a>
                                             <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить услугу?') }}')">
@@ -136,27 +146,34 @@
                         <tbody>
                         @forelse($bar as $item)
                             <tr>
-                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.bar.show', $item->record_id) }}">{{ date('H:i', $item->created_at) }}</a><br/>({{ __('Напиток с бара') }})</td>
+                                <td rowspan="2" style="width: 200px;"><a class="text-primary" href="{{ route('shift.bar.show', $item->record_id) }}">{{ date('H:i', $item->created_at) }}</a><br/>({{ __('Напиток') }})</td>
                                 <td colspan="2">
-                                    {{ __('Напиток') }} "<a href="{{ route('dict.bar.show', $item->bar->item_id) }}">{{ $item->bar->title }}</a>",
-                                    {{ __('в объеме') }} {{ $item->bar->portion }} {{ $item->amount }} {{ Helper::num2word($item->amount, [__('раз'), __('раза'), __('раз')]) }}
+                                    {{ __('Товар') }} "<a href="{{ route('dict.bar.show', $item->record_id) }}">{{ $item->bar->title }}</a>",
+                                    {{ __('в объеме') }} {{ $item->bar->portion }}
                                 </td>
                             </tr>
                             <tr>
-                                <td>{{ __('Оплата') }} {{ Helper::payType($item->pay_type) }} {{ number_format($item->total_price, 0, '.', ' ') }}р</td>
+                                <td>
+                                    {{ __('Оплата') }}
+                                    {{ number_format($item->bar_price_with_sale, 0, '.', ' ') }}{{ __('р.') }} [
+                                    Нал: {{ number_format($item->cash_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Карта: {{ number_format($item->card_payed, 0, '.', ' ') }}{{ __('р.') }},
+                                    Перевод: {{ number_format($item->phone_payed, 0, '.', ' ') }}{{ __('р.') }}
+                                    ]
+                                </td>
                                 <td class="text-end" style="width: 110px">
                                     <form method="post" action="{{ route('shift.bar.destroy', $item->record_id) }}" class="admin-table__nomargin">
                                         @csrf
                                         @method('DELETE')
 
                                         <div class="mmot-table__action">
-                                            <a title="Показать" href="{{ route('shift.bar.show', $item->item_id) }}" class="mmot-table__action__one">
+                                            <a title="Показать" href="{{ route('shift.bar.show', $item->record_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-view"></use></svg>
                                             </a>
-                                            <a title="Изменить" href="{{ route('shift.bar.edit', $item->item_id) }}" class="mmot-table__action__one">
+                                            <a title="Изменить" href="{{ route('shift.bar.edit', $item->record_id) }}" class="mmot-table__action__one">
                                                 <svg class="mmot-table_view mmot-table__ico"><use xlink:href="#site-edit"></use></svg>
                                             </a>
-                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить напиток?') }}')">
+                                            <button title="Удалить" type="submit" class="mmot-table__action__one" onclick="return confirm('{{ __('Вы уверены, что хотите удалить товар?') }}')">
                                                 <svg class="mmot-table__delete mmot-table__ico"><use xlink:href="#site-delete"></use></svg>
                                             </button>
                                         </div>
@@ -174,7 +191,7 @@
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
                         <a href="{{ route('shift.program.create') }}" class="btn btn-primary rounded me-1">{{ __('Продать программу') }}</a>
                         <a href="{{ route('shift.service.create') }}" class="btn btn-primary rounded me-1">{{ __('Продать услуги') }}</a>
-                        <a href="{{ route('shift.bar.create') }}" class="btn btn-primary rounded me-1">{{ __('Продать напитки') }}</a>
+                        <a href="{{ route('shift.bar.create') }}" class="btn btn-primary rounded me-1">{{ __('Продать товары') }}</a>
                     </div>
 
                     <div class="accordion mb-3">
@@ -209,16 +226,15 @@
 
                     {{-- Последняя смена закрыта --}}
                 @else
-                        {{-- Можно открыть новую смену --}}
-                        <form method="post" action="{{ route('shift.open') }}">
-                            @csrf
-                            @method('POST')
+                    {{-- Можно открыть новую смену --}}
+                    <form method="post" action="{{ route('shift.open') }}">
+                        @csrf
+                        @method('POST')
 
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите открыть новую смену?') }}')" class="btn btn-primary me-1 rounded">{{ __('Открыть смену') }}</button>
-                            </div>
-                        </form>
-
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите открыть новую смену?') }}')" class="btn btn-primary me-1 rounded">{{ __('Открыть смену') }}</button>
+                        </div>
+                    </form>
                 @endif
 
             @endif

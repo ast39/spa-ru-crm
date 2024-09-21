@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Seance;
 
 use App\Http\Enums\PayType;
+use App\Http\Enums\PercentType;
+use App\Http\Services\Helper;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -17,6 +20,13 @@ class SeanceBarUpdateRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation()
+    {
+        if (!is_null($this->admin_percent ?? null) && $this->admin_percent == 0) {
+            $this->merge(['admin_percent' => Helper::adminPercent(User::find(auth()->id())->roles, PercentType::Program->value)]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,12 +36,18 @@ class SeanceBarUpdateRequest extends FormRequest
     {
         return [
 
+            'admin_percent' => ['required', 'integer'],
+
+            'item_id' => ['required', 'integer'],
             'guest' => ['nullable', 'string'],
-            'sale' => ['nullable', 'integer'],
-            'pay_type' => ['nullable', new Enum(PayType::class)],
             'note' => ['nullable', 'string'],
-            'amount' => ['nullable', 'integer'],
-            'gift' => ['nullable', 'string'],
+
+            'cash_payed' => ['nullable', 'integer'],
+            'card_payed' => ['nullable', 'integer'],
+            'phone_payed' => ['nullable', 'integer'],
+            'cert_payed' => ['nullable', 'integer'],
+            'sale_payed' => ['nullable', 'integer'],
+            'handle_price' => ['nullable', 'integer'],
         ];
     }
 }

@@ -27,6 +27,11 @@ return new class extends Migration
             $table->unsignedBigInteger('master_id')
                 ->comment('ID мастера');
 
+            $table->unsignedBigInteger('cover_master_id')
+                ->nullable()
+                ->default(null)
+                ->comment('ID второго мастера');
+
             $table->unsignedBigInteger('program_id')
                 ->comment('ID программы');
 
@@ -64,6 +69,18 @@ return new class extends Migration
                 ->default(PayType::Cash->value)
                 ->comment('Тип оплаты');
 
+            $table->unsignedDecimal('admin_percent')
+                ->default(0)
+                ->comment('Процент администратора');
+
+            $table->unsignedDecimal('master_percent')
+                ->default(0)
+                ->comment('Процент основного мастера');
+
+            $table->unsignedDecimal('cover_master_percent')
+                ->default(0)
+                ->comment('Процент второго мастера');
+
             $table->text('note')
                 ->nullable()
                 ->default(null)
@@ -76,6 +93,11 @@ return new class extends Migration
             $table->timestamps();
 
             $table->comment('Сеансы');
+
+            $table->foreign('shift_id', 'seance_program_shift_key')
+                ->references('shift_id')
+                ->on('shifts')
+                ->onDelete('cascade');
 
             $table->foreign('program_id', 'seance_program_key')
                 ->references('program_id')
@@ -91,6 +113,11 @@ return new class extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+
+            $table->foreign('cover_master_id', 'seance_program_cover_master_key')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
 
     }
@@ -103,8 +130,11 @@ return new class extends Migration
         Schema::dropIfExists('seances');
 
         Schema::table('seance_programs', function(Blueprint $table) {
-            $table->dropForeign('seance_program_key');
-            $table->dropForeign('seance_master_key');
+            $table->dropForeign('seance_program_shift_key');
+            $table->dropForeign('seance_program_program_key');
+            $table->dropForeign('seance_program_admin_key');
+            $table->dropForeign('seance_program_master_key');
+            $table->dropForeign('seance_program_cover_master_key');
         });
     }
 };

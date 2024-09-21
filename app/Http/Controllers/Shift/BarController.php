@@ -3,23 +3,18 @@
 namespace App\Http\Controllers\Shift;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Seance;
-use App\Http\Controllers\SeanceItem;
-use App\Http\Controllers\SeanceUpdateRequest;
 use App\Http\Requests\Seance\SeanceBarStoreRequest;
 use App\Http\Requests\Seance\SeanceBarUpdateRequest;
-use App\Http\Requests\Seance\SeanceProgramStoreRequest;
-use App\Http\Requests\Seance\SeanceServiceStoreRequest;
+use App\Http\Services\PushTgService;
 use App\Http\Services\ShiftHelper;
 use App\Http\Traits\Dictionarable;
 use App\Models\SeanceBar;
-use App\Models\SeanceProgram;
-use App\Models\SeanceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+
 
 class BarController extends Controller {
 
@@ -40,7 +35,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Форма породажи бара
+     * Форма продажи товаров
      *
      * @return View
      */
@@ -54,7 +49,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Продажа позиций бара
+     * Продажа позиций товаров
      *
      * @param SeanceBarStoreRequest $request
      * @return RedirectResponse
@@ -69,26 +64,9 @@ class BarController extends Controller {
         try {
             DB::beginTransaction();
 
-            if (!is_null($data['bar'] ?? null)) {
-                foreach ($data['bar'] as $item_id => $item_order) {
-                    if ($item_order['amount'] == 0) {
-                        continue;
-                    }
-
-                    SeanceBar::query()->create([
-                        'shift_id' => $data['shift_id'],
-                        'seance_id' => $data['seance_id'],
-                        'admin_id' => $data['admin_id'],
-                        'guest' => $data['guest'] ?? '',
-                        'item_id' => $item_id,
-                        'amount' => $item_order['amount'],
-                        'sale' => $data['sale'],
-                        'gift' => (int) !is_null($item_order['gift'] ?? null),
-                        'pay_type' => $data['pay_type'],
-                        'note' => $data['note'] ?? '',
-                    ]);
-                }
-            }
+            $bar = SeanceBar::create($data);
+            $bar_id = $bar->record_id;
+            PushTgService::bar(SeanceBar::find($bar_id));
 
             DB::commit();
 
@@ -99,7 +77,7 @@ class BarController extends Controller {
             DB::rollBack();
             Log::error(__CLASS__, ['message' => $e->getMessage()]);
 
-            return redirect()->back();
+            return redirect()->back()->withErrors(['err' => $e->getMessage()]);
         }
     }
 
@@ -129,7 +107,6 @@ class BarController extends Controller {
     public function update(SeanceBarUpdateRequest $request, int $id): RedirectResponse
     {
         $data = $request->validated();
-        $data['gift'] = (int) !is_null($data['gift'] ?? null);
 
         $seance_bar = SeanceBar::query()->findOrFail($id);
         $seance_bar->update($data);

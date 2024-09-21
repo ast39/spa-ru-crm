@@ -14,12 +14,12 @@ use Illuminate\View\View;
 
 
 /**
- * Блок управления баром
+ * Блок управления товарами
  */
 class BarController extends Controller {
 
     /**
-     * Ассортимент бара
+     * Ассортимент товаров
      *
      * @param ItemFilterRequest $request
      * @return View
@@ -43,7 +43,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Информация по позиции бара
+     * Информация по позиции товара
      *
      * @param $id
      * @return View
@@ -58,7 +58,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Форма создания новой позиции бара
+     * Форма создания новой позиции товара
      *
      * @return View|RedirectResponse
      */
@@ -72,7 +72,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Сохранение новой позиции бара
+     * Сохранение новой позиции товара
      *
      * @param ItemStoreRequest $request
      * @return RedirectResponse
@@ -91,7 +91,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Форма редактирования позиции бара
+     * Форма редактирования позиции товара
      *
      * @param int $id
      * @return View
@@ -106,7 +106,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Обновление данных позиции бара
+     * Обновление данных позиции товара
      *
      * @param ItemUpdateRequest $request
      * @param int $id
@@ -124,7 +124,7 @@ class BarController extends Controller {
     }
 
     /**
-     * Удаление позиции бара
+     * Удаление позиции товара
      *
      * @param int $id
      * @return RedirectResponse

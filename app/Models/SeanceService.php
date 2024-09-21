@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class SeanceService extends Model {
 
     use HasFactory, Filterable;
@@ -29,7 +30,7 @@ class SeanceService extends Model {
 
 
     /**
-     * Мастер
+     * Администратор
      *
      * @return BelongsTo
      */
@@ -49,6 +50,16 @@ class SeanceService extends Model {
     }
 
     /**
+     * Второй мастер
+     *
+     * @return BelongsTo
+     */
+    public function cover_master(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cover_master_id', 'id');
+    }
+
+    /**
      * Услуга
      *
      * @return BelongsTo
@@ -58,38 +69,25 @@ class SeanceService extends Model {
         return $this->belongsTo(Service::class, 'service_id', 'service_id');
     }
 
-
     /**
-     * Итоговый оборот с услуг
+     * Фактическая цена услуги до скидок
      *
      * @return int
      */
-    public function getTotalPriceAttribute(): int
+    public function getServicePriceAttribute(): int
     {
-        return (int) ($this->amount * $this->service->price);
+        return $this->cash_payed + $this->card_payed + $this->phone_payed + $this->cert_payed + $this->sale_payed;
     }
 
     /**
-     * Итоговая скидка с услуг
+     * Итого с клиента за услугу
      *
      * @return int
      */
-    public function getSaleSumAttribute(): int
-    {
-        return (int) ($this->gift > 0
-            ? $this->total_price
-            : $this->total_price * $this->sale / 100);
-    }
-
-    /**
-     * Итого с клиента за услуги
-     *
-     * @return int
-     */
-    public function getTotalPriceWithSaleAttribute(): int
+    public function getServicePriceWithSaleAttribute(): int
     {
         return $this->status == 1
-            ? $this->total_price - $this->sale_sum
+            ? $this->service_price - $this->sale_payed
             : 0;
     }
 
@@ -102,23 +100,41 @@ class SeanceService extends Model {
     {
         return $this->admin_id == $this->master_id
             ? 0
-            : ($this->pay_type == PayType::Cert->value
-                ? 0
-                : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->total_price / 100);
+            : ($this->admin_percent > 0
+                ? $this->admin_percent * $this->getServicePriceAttribute() / 100
+                : Helper::adminPercent($this->admin->roles, PercentType::Service->value) * $this->getServicePriceAttribute() / 100);
     }
 
     /**
-     * Заработок мастера
+     * Заработок основного мастера
      *
      * @return int
      */
     public function getMasterProfitAttribute(): int
     {
-        if ($this->status == 1) {
-            return Helper::masterPercent($this->master->roles, PercentType::Service->value) * $this->total_price / 100;
-        } else {
+        return $this->status == 1
+            ? ($this->master_percent > 0
+                ? $this->master_percent * $this->getServicePriceAttribute() / 100
+                : Helper::masterPercent($this->master->roles, PercentType::Service->value) * $this->getServicePriceAttribute() / 100)
+            : 0;
+    }
+
+    /**
+     * Заработок второго мастера
+     *
+     * @return int
+     */
+    public function getCoverMasterProfitAttribute(): int
+    {
+        if (is_null($this->cover_master_id)) {
             return 0;
         }
+
+        return $this->status == 1
+            ? ($this->cover_master_percent > 0
+                ? $this->cover_master_percent * $this->getServicePriceAttribute() / 100
+                : Helper::masterPercent($this->cover_master->roles, PercentType::Service->value) * $this->getServicePriceAttribute() / 100)
+            : 0;
     }
 
     /**
@@ -128,7 +144,7 @@ class SeanceService extends Model {
      */
     public function getOwnerProfitAttribute(): int
     {
-        return $this->total_price_with_sale - $this->admin_profit - $this->master_profit;
+        return $this->service_price_with_sale - $this->admin_profit - $this->master_profit - $this->cover_master_profit;
     }
 
 
@@ -145,28 +161,36 @@ class SeanceService extends Model {
 
 
     protected $with = [
+
         'admin',
         'master',
         'service',
     ];
 
     protected $appends = [
-        'total_price',
-        'sale_sum',
-        'total_price_with_sale',
+
+        'service_price',
+        'service_price_with_sale',
         'admin_profit',
         'master_profit',
+        'cover_master_profit',
         'owner_profit',
     ];
 
     protected $casts = [
+
+        'open_time'  => 'timestamp',
+        'close_time' => 'timestamp',
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
     ];
 
     protected $fillable = [
-        'record_id', 'shift_id', 'seance_id',  'admin_id', 'master_id', 'service_id', 'guest',
-        'amount', 'sale', 'gift', 'pay_type', 'note', 'status',
+
+        'record_id', 'shift_id', 'admin_id', 'master_id', 'cover_master_id', 'service_id', 'guest', 'from',
+        'admin_percent', 'master_percent', 'cover_master_percent',
+        'open_time', 'close_time', 'note', 'status',
+        'cash_payed', 'card_payed', 'phone_payed', 'cert_payed', 'sale_payed', 'handle_price',
         'created_at', 'updated_at',
     ];
 

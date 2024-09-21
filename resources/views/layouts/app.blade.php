@@ -1,6 +1,5 @@
 @php
-    use App\Http\Services\Helper;
-    use Illuminate\Support\Facades\Gate;
+    use App\Libs\Icons;
 @endphp
 
 <!doctype html>
@@ -36,7 +35,7 @@
 
     {{-- Fa Icons CSS (CDN) --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css?v=180924') }}">
 </head>
 
 <body>
@@ -52,6 +51,32 @@
         </main>
     </div>
 
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        @auth
+            <a href="{{ route('cabinet.index') }}" title="Кабинет">{!! Icons::get(Icons::DEMO) !!}</a>
+            @if(Gate::allows('owner') || Gate::allows('admin'))
+                <a href="{{ route('dict.user.index') }}" title="Сотрудники">{!! Icons::get(Icons::EMPLOYEES) !!}</a>
+            @endif
+            <a href="{{ route('dict.program.index') }}" title="Прайс">{!! Icons::get(Icons::PRICE) !!}</a>
+        @endauth
+        @guest
+            @if (Route::has('login'))
+                <a href="{{ route('login') }}" title="Вход">{!! Icons::get(Icons::LOGIN) !!}</a>
+            @endif
+        @else
+            @if(Gate::allows('owner'))
+                <a href="{{ route('report.index') }}" title="Отчеты">{!! Icons::get(Icons::REPORTS) !!}</a>
+            @elseif(Gate::allows('admin'))
+                <a href="{{ route('report.show') }}" title="Последний отчет">{!! Icons::get(Icons::REPORTS) !!}</a>
+            @endif
+            <a href="{{ route('shift.index') }}" title="Смена">{!! Icons::get(Icons::SHIFT) !!}</a>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                {!! Icons::get(Icons::LOGOUT) !!}
+            </a>
+        @endguest
+    </div>
+
     {{-- Footer --}}
     @include('layouts.components.footer')
 
@@ -64,20 +89,47 @@
     <script type="text/javascript" src="{{ asset('/js/dselect.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/js/app.js?v=' . time()) }}"></script>
 
+    @push('js')
+        <script>
+            $(document).ready(function() {
+                // Инкремент значений
+                $('.btn-increment').click(function() {
+                    var input = $(this).siblings('.percent-input');
+                    var currentVal = parseInt(input.val());
+                    var maxVal = parseInt(input.data('max'));
+                    var step = parseInt(input.data('step'));
+
+                    if (currentVal < maxVal && !input.prop('disabled')) {
+                        input.val(currentVal + step);
+                    }
+                });
+
+                // Декремент значений
+                $('.btn-decrement').click(function() {
+                    var input = $(this).siblings('.percent-input');
+                    var currentVal = parseInt(input.val());
+                    var minVal = parseInt(input.data('min'));
+                    var step = parseInt(input.data('step'));
+
+                    if (currentVal > minVal && !input.prop('disabled')) {
+                        input.val(currentVal - step);
+                    }
+                });
+            })
+        </script>
+    @endpush
+d
     {{-- JS grubber --}}
     @stack('js')
+    @stack('js2')
 
     <script src="{{ asset('/sw.js') }}"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            try {
-                await navigator.serviceWorker.register("/sw.js");
-                console.log("Service Worker registered");
-            } catch (e) {
-                console.log("Service Worker not registered");
-            }
+        if (!navigator.serviceWorker.controller) {
+            navigator.serviceWorker.register("/sw.js").then(function (reg) {
+                console.log("Service Worker был зарегистрирован для области действия: " + reg.scope);
+            });
         }
     </script>
-
 </body>
 </html>

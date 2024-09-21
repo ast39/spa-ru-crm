@@ -1,16 +1,16 @@
 @php
-    use App\Http\Services\Helper;
+
 @endphp
 
 @extends('layouts.app')
 
-@section('title', 'Добавить позицию бара')
+@section('title', 'Добавить позицию товара')
 
 @section('content')
     @include('components/tabs/price')
 
     <div class="card bg-primary text-white">
-        <div class="card-header">{{ __('Добавить позицию бара') }}</div>
+        <div class="card-header">{{ __('Добавить позицию товара') }}</div>
 
         <div class="card-body bg-light">
             <form method="post" action="{{ route('dict.bar.store') }}">

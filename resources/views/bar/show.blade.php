@@ -55,8 +55,8 @@
                     <a href="{{ route('dict.bar.index') }}" class="btn btn-secondary me-1 rounded">{{ __('Список') }}</a>
                     @if(Gate::allows('owner'))
                         <a href="{{ route('dict.bar.edit', $bar->item_id) }}" class="btn btn-warning me-1 rounded">{{ __('Изменить') }}</a>
-                        <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить позицию бара?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
-                        <a href="{{ route('dict.bar.create') }}" class="btn btn-primary rounded">{{ __('Добавить позицию бара') }}</a>
+                        <button type="submit" title="Delete" onclick="return confirm('{{ __('Вы уверены, что хотите удалить позицию товара?') }}')" class="btn btn-danger me-1 rounded">{{ __('Удалить') }}</button>
+                        <a href="{{ route('dict.bar.create') }}" class="btn btn-primary rounded">{{ __('Добавить позицию товара') }}</a>
                     @endif
                 </div>
             </form>

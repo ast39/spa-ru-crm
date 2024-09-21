@@ -180,7 +180,7 @@ class WorkFlow extends Seeder
             'guest' => 'Просто гость',
             'amount' => rand(1,4),
             'pay_type' => PayType::Cash->value,
-            'note' => 'Тестовый напиток 1',
+            'note' => 'Тестовый товар 1',
             'created_at' => Carbon::now()->startOfDay()->subWeek()->addHours(14),
             'updated_at' => Carbon::now()->startOfDay()->subWeek()->addHours(14),
         ]);
@@ -290,7 +290,7 @@ class WorkFlow extends Seeder
             'amount' => rand(1,4),
             'gift' => 1,
             'pay_type' => PayType::Phone->value,
-            'note' => 'Тестовый напиток 2',
+            'note' => 'Тестовый товар 2',
             'created_at' => Carbon::now()->startOfDay()->subWeek()->addDay()->addHours(17),
             'updated_at' => Carbon::now()->startOfDay()->subWeek()->addDay()->addHours(17),
         ]);
